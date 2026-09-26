@@ -655,6 +655,27 @@ world.afterEvents.entityHitEntity.subscribe((event) => {
     );
 });
 
+world.afterEvents.entityHurt.subscribe((event) => {
+    const player = event.hurtEntity;
+
+    // ダメージを受けたプレイヤー本人の体力上限スコアを1増やす
+    if (player.typeId !== "minecraft:player") return;
+
+    let healthMaxObjective = world.scoreboard.getObjective("health_max");
+    if (!healthMaxObjective) {
+        healthMaxObjective = world.scoreboard.addObjective(
+            "health_max",
+            "体力上限"
+        );
+    }
+
+    const identity = player.scoreboardIdentity;
+    if (!identity) return;
+
+    const currentScore = healthMaxObjective.getScore(identity) ?? 0;
+    healthMaxObjective.setScore(identity, currentScore + 1);
+});
+
 world.afterEvents.playerBreakBlock.subscribe((event) => {
     const player = event.player;
     const block = event.brokenBlockPermutation;
@@ -670,6 +691,9 @@ system.runInterval(() => {
 
     const mineingObjective =
         scoreboard.getObjective("mineing");
+
+    const healthMaxObjective =
+        scoreboard.getObjective("health_max");
 
     for (const player of world.getAllPlayers()) {
 
@@ -702,12 +726,18 @@ system.runInterval(() => {
                 player.scoreboardIdentity
             ) ?? 0;
 
+        const healthMax =
+            healthMaxObjective?.getScore(
+                player.scoreboardIdentity
+            ) ?? 0;
+
         /*
          * アクションバー表示
          */
         player.onScreenDisplay.setActionBar(
             `§c筋力: §f${strength}  ` +
             `§b採掘能力: §f${mineing}  ` +
+            `§a体力上限: §f${healthMax}  ` +
             `§6満腹度: §f${hunger.currentValue.toFixed(0)}  ` +
             `§e隠し満腹度: §f${saturation.currentValue.toFixed(1)}  `
         );

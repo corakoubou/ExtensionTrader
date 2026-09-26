@@ -319,6 +319,17 @@
 						"execute if score @s strength matches 14001..18000 run event entity @a minecraft:add_component_attack_level_8",
 						"execute if score @s strength matches 18001..24000 run event entity @a minecraft:add_component_attack_level_9",
 						"execute if score @s strength matches 22001..999999 run event entity @a minecraft:add_component_attack_level_10",
+
+						"execute if score @s health_max matches 0..1000 run effect @s health_boost 60 0 true",
+						"execute if score @s health_max matches 1001..2000 run effect @s health_boost 60 1 true",
+						"execute if score @s health_max matches 2001..3500 run effect @s health_boost 60 2 true",
+						"execute if score @s health_max matches 3501..5500 run effect @s health_boost 60 3 true",
+						"execute if score @s health_max matches 5501..8000 run effect @s health_boost 60 4 true",
+						"execute if score @s health_max matches 8001..11000 run effect @s health_boost 60 5 true",
+						"execute if score @s health_max matches 11001..14000 run effect @s health_boost 60 6 true",
+						"execute if score @s health_max matches 14001..18000 run effect @s health_boost 60 7 true",
+						"execute if score @s health_max matches 18001..24000 run effect @s health_boost 60 8 true",
+						"execute if score @s health_max matches 24001..999999 run effect @s health_boost 60 9 true",
 						
 						"execute if score @s mineing matches 1001..2000 run tag @a add eff0",
 						"execute if score @s mineing matches 2001..3500 run tag @a add eff1",
