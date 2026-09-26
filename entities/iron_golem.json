@@ -63,8 +63,8 @@
         "table": "loot_tables/entities/iron_golem.json"
       },
       "minecraft:health": {
-        "value": 300,
-        "max": 300
+        "value": 600,
+        "max": 600
       },
       "minecraft:hurt_on_condition": {
         "damage_conditions": [

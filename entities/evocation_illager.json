@@ -89,8 +89,8 @@
         "table": "loot_tables/entities/evocation_illager.json"
       },
       "minecraft:health": {
-        "value": 24,
-        "max": 24
+        "value": 48,
+        "max": 48
       },
       "minecraft:hurt_on_condition": {
         "damage_conditions": [

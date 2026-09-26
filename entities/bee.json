@@ -622,8 +622,8 @@
       "minecraft:can_fly": {
       },
       "minecraft:health": {
-        "value": 10,
-        "max": 10
+        "value": 20,
+        "max": 20
       },
       "minecraft:nameable": {
       },

@@ -150,7 +150,7 @@
       "minecraft:nameable": {
       },
       "minecraft:health": {
-        "value": 14
+        "value": 28
       },
       "minecraft:damage_sensor": {
         "triggers": {

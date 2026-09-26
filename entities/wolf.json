@@ -242,8 +242,8 @@
 
       "minecraft:wolf_increased_max_health": {
         "minecraft:health": {
-          "value": 40,
-          "max": 40
+          "value": 80,
+          "max": 80
         }
       },
 
@@ -546,8 +546,8 @@
         "height": 0.8
       },
       "minecraft:health": {
-        "value": 8,
-        "max": 8
+        "value": 16,
+        "max": 16
       },
       "minecraft:hurt_on_condition": {
         "damage_conditions": [

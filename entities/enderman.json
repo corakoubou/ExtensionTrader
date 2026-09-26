@@ -84,8 +84,8 @@
         "table": "loot_tables/entities/enderman.json"
       },
       "minecraft:health": {
-        "value": 40,
-        "max": 40
+        "value": 80,
+        "max": 80
       },
       "minecraft:hurt_on_condition": {
         "damage_conditions": [

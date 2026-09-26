@@ -313,8 +313,8 @@
       },
       "minecraft:health": {
         "value": {
-          "range_min": 15,
-          "range_max": 30
+          "range_min": 30,
+          "range_max": 60
         }
       },
       "minecraft:hurt_on_condition": {

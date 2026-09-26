@@ -57,7 +57,7 @@
       "minecraft:leashable_to": {
       },
       "minecraft:health": {
-        "value": 20
+        "value": 40
       },
       "minecraft:hurt_on_condition": {
         "damage_conditions": [

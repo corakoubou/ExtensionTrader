@@ -35,8 +35,8 @@
       "minecraft:jump.static": {
       },
       "minecraft:health": {
-        "value": 80,
-        "max": 80
+        "value": 160,
+        "max": 160
       },
       "minecraft:hurt_on_condition": {
         "damage_conditions": [

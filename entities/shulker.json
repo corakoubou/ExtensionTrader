@@ -35,8 +35,8 @@
         }
       },
       "minecraft:health": {
-        "value": 30,
-        "max": 30
+        "value": 60,
+        "max": 60
       },
       "minecraft:fire_immune": true,
       "minecraft:movement": {

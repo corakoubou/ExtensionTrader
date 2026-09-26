@@ -70,8 +70,8 @@
         "table": "loot_tables/entities/witch.json"
       },
       "minecraft:health": {
-        "value": 26,
-        "max": 26
+        "value": 52,
+        "max": 52
       },
       "minecraft:hurt_on_condition": {
         "damage_conditions": [
