@@ -320,16 +320,16 @@
 						"execute if score @s strength matches 18001..24000 run event entity @a minecraft:add_component_attack_level_9",
 						"execute if score @s strength matches 22001..999999 run event entity @a minecraft:add_component_attack_level_10",
 
-						"execute if score @s health_max matches 0..1000 run effect @s health_boost 60 0 true",
-						"execute if score @s health_max matches 1001..2000 run effect @s health_boost 60 1 true",
-						"execute if score @s health_max matches 2001..3500 run effect @s health_boost 60 2 true",
-						"execute if score @s health_max matches 3501..5500 run effect @s health_boost 60 3 true",
-						"execute if score @s health_max matches 5501..8000 run effect @s health_boost 60 4 true",
-						"execute if score @s health_max matches 8001..11000 run effect @s health_boost 60 5 true",
-						"execute if score @s health_max matches 11001..14000 run effect @s health_boost 60 6 true",
-						"execute if score @s health_max matches 14001..18000 run effect @s health_boost 60 7 true",
-						"execute if score @s health_max matches 18001..24000 run effect @s health_boost 60 8 true",
-						"execute if score @s health_max matches 24001..999999 run effect @s health_boost 60 9 true",
+						"execute if score @s health_max matches 0..100 run effect @s health_boost 60 0 true",
+						"execute if score @s health_max matches 101..200 run effect @s health_boost 60 1 true",
+						"execute if score @s health_max matches 201..350 run effect @s health_boost 60 2 true",
+						"execute if score @s health_max matches 351..550 run effect @s health_boost 60 3 true",
+						"execute if score @s health_max matches 551..800 run effect @s health_boost 60 4 true",
+						"execute if score @s health_max matches 801..1100 run effect @s health_boost 60 5 true",
+						"execute if score @s health_max matches 1101..1400 run effect @s health_boost 60 6 true",
+						"execute if score @s health_max matches 1401..1800 run effect @s health_boost 60 7 true",
+						"execute if score @s health_max matches 1801..2400 run effect @s health_boost 60 8 true",
+						"execute if score @s health_max matches 2401..999999 run effect @s health_boost 60 9 true",
 						
 						"execute if score @s mineing matches 1001..2000 run tag @a add eff0",
 						"execute if score @s mineing matches 2001..3500 run tag @a add eff1",
@@ -469,32 +469,7 @@
                     ]
                 }
             },
-			
-			"minecraft:tag_coco": {
-                "queue_command": {
-                    "command": [
-                        "tag @a add coco",
-						"tag @a add common",
-						"scoreboard objectives add strength dummy 筋力",
-						"scoreboard objectives add stamina dummy スタミナ",
-						"scoreboard objectives add stamina_max dummy スタミナ最大値",
-						"scoreboard objectives add mineing dummy 採掘能力値",
-						"scoreboard players set @s strength 1",
-						"scoreboard players set @s stamina 100",
-						"scoreboard players set @s stamina_max 100",
-						"scoreboard players set @s mineing 0",
-						"gamerule mobgriefing false",
-						"gamerule randomtickspeed 2",
-						"event entity @a minecraft:add_stats_haste0",
-						"event entity @a minecraft:add_stats_haste1",
-						"event entity @a minecraft:add_stats_night0",
-						"event entity @a minecraft:add_stats_hero0",
-						"execute at @a run effect @s regeneration 300 0 true",
-						"execute at @a run effect @s resistance 120 0 true"
-                    ]
-                }
-            },
-			
+						
 			"minecraft:tag_toriko": {
                 "queue_command": {
                     "command": [
