@@ -36,8 +36,8 @@
         }
       },
       "minecraft:health": {
-        "value": 600,
-        "max": 600
+        "value": 1200,
+        "max": 1200
       },
       "minecraft:collision_box": {
         "width": 1,

@@ -23,8 +23,8 @@
       "minecraft:nameable": {
       },
       "minecraft:health": {
-        "value": 10,
-        "max": 10
+        "value": 20,
+        "max": 20
       },
       "minecraft:collision_box": {
         // The extra 0.02 prevents the Ghast from spawning in areas where it would suffocate.

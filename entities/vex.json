@@ -41,8 +41,8 @@
         "table": "loot_tables/entities/vex_gear.json"
       },
       "minecraft:health": {
-        "value": 14,
-        "max": 14
+        "value": 28,
+        "max": 28
       },
       "minecraft:attack": {
         "damage": 3

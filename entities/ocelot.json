@@ -134,8 +134,8 @@
         "minecraft:is_tamed": {
         },
         "minecraft:health": {
-          "value": 20,
-          "max": 20
+          "value": 40,
+          "max": 40
         },
         "minecraft:sittable": {
         },
@@ -168,8 +168,8 @@
       "minecraft:is_hidden_when_invisible": {
       },
       "minecraft:health": {
-        "value": 10,
-        "max": 10
+        "value": 20,
+        "max": 20
       },
       "minecraft:hurt_on_condition": {
         "damage_conditions": [

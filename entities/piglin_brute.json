@@ -196,8 +196,8 @@
         "suffocate_time": 0
       },
       "minecraft:health": {
-        "value": 50,
-        "max": 50
+        "value": 100,
+        "max": 100
       },
       "minecraft:hurt_on_condition": {
         "damage_conditions": [

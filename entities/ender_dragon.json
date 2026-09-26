@@ -53,8 +53,8 @@
         "family": [ "dragon", "mob","monster" ]
       },
       "minecraft:health": {
-        "value": 2000,
-        "max": 2000
+        "value": 4000,
+        "max": 4000
       },
       "minecraft:boss": {
         "should_darken_sky": false,

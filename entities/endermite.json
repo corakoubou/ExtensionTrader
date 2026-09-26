@@ -42,8 +42,8 @@
       "minecraft:can_climb": {
       },
       "minecraft:health": {
-        "value": 8,
-        "max": 8
+        "value": 16,
+        "max": 16
       },
       "minecraft:hurt_on_condition": {
         "damage_conditions": [

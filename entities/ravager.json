@@ -237,8 +237,8 @@
         "width": 1.95
       },
       "minecraft:health": {
-        "max": 100,
-        "value": 100
+        "max": 200,
+        "value": 200
       },
       "minecraft:hurt_on_condition": {
         "damage_conditions": [

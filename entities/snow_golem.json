@@ -34,8 +34,8 @@
         "table": "loot_tables/entities/snowman.json"
       },
       "minecraft:health": {
-        "value": 400,
-        "max": 400
+        "value": 800,
+        "max": 800
       },
       "minecraft:movement": {
         "value": 0.4

@@ -91,8 +91,8 @@
           "value": 0.2375 // Resulting in a final size of 0.95.
         },
         "minecraft:health": {
-          "value": 20,
-          "max": 20
+          "value": 40,
+          "max": 40
         },
         "minecraft:breathable": {
           "total_supply": 5,
@@ -204,8 +204,8 @@
       },
       "minecraft:adult": {
         "minecraft:health": {
-          "value": 20,
-          "max": 20
+          "value": 40,
+          "max": 40
         },
         "minecraft:leashable_to": {
         },

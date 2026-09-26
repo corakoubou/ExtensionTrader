@@ -68,7 +68,7 @@
       "minecraft:nameable": {
       },
       "minecraft:health": {
-        "value": 10
+        "value": 20
       },
       "minecraft:hurt_on_condition": {
         "damage_conditions": [
