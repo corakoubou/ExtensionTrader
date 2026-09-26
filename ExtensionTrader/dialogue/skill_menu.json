@@ -1,0 +1,102 @@
+{
+    "format_version": "1.17",
+    "minecraft:npc_dialogue": {
+        "scenes": [
+            {
+                "scene_tag": "skill_menu",
+                "npc_name": "§6強化スキル選択",
+                "text": "§6強化するスキルを選んでください。",
+                "buttons": [
+                    {
+                        "name": "§c防御力向上",
+                        "commands": [
+							"execute at @a[tag=res2] run dialogue change @e[type=npc,tag=skill_menu_npc,c=1] error_message",
+							"execute at @a[tag=res2] run event entity @a minecraft:open_error_message_dialog",
+                            "event entity @a[tag=res0,tag=res1,tag=!res2] minecraft:add_stats_resistance2",
+                            "event entity @a[tag=res0,tag=!res1,tag=!res2] minecraft:add_stats_resistance1",
+                            "event entity @a[tag=!res0,tag=!res1,tag=!res2] minecraft:add_stats_resistance0",
+							"execute at @a[tag=!res2] run kill @e[type=npc,tag=skill_menu_npc,c=1]"
+                        ]
+                    },
+                    {
+                        "name": "§b攻撃力向上",
+                        "commands": [
+							"execute at @a[tag=str3] run dialogue change @e[type=npc,tag=skill_menu_npc,c=1] error_message",
+							"execute at @a[tag=str3] run event entity @a minecraft:open_error_message_dialog",
+                            "event entity @a[tag=str0,tag=str1,tag=str2,tag=!str3] minecraft:add_stats_power3",
+                            "event entity @a[tag=str0,tag=str1,tag=!str2,tag=!str3] minecraft:add_stats_power2",
+                            "event entity @a[tag=str0,tag=!str1,tag=!str2,tag=!str3] minecraft:add_stats_power1",
+                            "event entity @a[tag=!str0,tag=!str1,tag=!str2,tag=!str3] minecraft:add_stats_power0",
+							"execute at @a[tag=!str3] run kill @e[type=npc,tag=skill_menu_npc,c=1]"
+                        ]
+                    },
+                    {
+                        "name": "§6採掘速度向上",
+                        "commands": [
+							"execute at @a[tag=has6] run dialogue change @e[type=npc,tag=skill_menu_npc,c=1] error_message",
+							"execute at @a[tag=has6] run event entity @a minecraft:open_error_message_dialog",
+                            "event entity @a[tag=has0,tag=has1,tag=has2,tag=has3,tag=has4,tag=has5,tag=!has6] minecraft:add_stats_haste6",
+                            "event entity @a[tag=has0,tag=has1,tag=has2,tag=has3,tag=has4,tag=!has5,tag=!has6] minecraft:add_stats_haste5",
+                            "event entity @a[tag=has0,tag=has1,tag=has2,tag=has3,tag=!has4,tag=!has5,tag=!has6] minecraft:add_stats_haste4",
+                            "event entity @a[tag=has0,tag=has1,tag=has2,tag=!has3,tag=!has4,tag=!has5,tag=!has6] minecraft:add_stats_haste3",
+                            "event entity @a[tag=has0,tag=has1,tag=!has2,tag=!has3,tag=!has4,tag=!has5,tag=!has6] minecraft:add_stats_haste2",
+                            "event entity @a[tag=has0,tag=!has1,tag=!has2,tag=!has3,tag=!has4,tag=!has5,tag=!has6] minecraft:add_stats_haste1",
+                            "event entity @a[tag=!has0,tag=!has1,tag=!has2,tag=!has3,tag=!has4,tag=!has5,tag=!has6] minecraft:add_stats_haste0",
+							"execute at @a[tag=!has6] run kill @e[type=npc,tag=skill_menu_npc,c=1]"
+                        ]
+                    },
+                    {
+                        "name": "§8交易向上",
+                        "commands": [
+							"execute at @a[tag=her6] run dialogue change @e[type=npc,tag=skill_menu_npc,c=1] error_message",
+							"execute at @a[tag=her6] run event entity @a minecraft:open_error_message_dialog",
+                            "event entity @a[tag=her0,tag=her1,tag=her2,tag=her3,tag=her4,tag=her5,tag=!her6] minecraft:add_stats_hero6",
+                            "event entity @a[tag=her0,tag=her1,tag=her2,tag=her3,tag=her4,tag=!her5,tag=!her6] minecraft:add_stats_hero5",
+                            "event entity @a[tag=her0,tag=her1,tag=her2,tag=her3,tag=!her4,tag=!her5,tag=!her6] minecraft:add_stats_hero4",
+                            "event entity @a[tag=her0,tag=her1,tag=her2,tag=!her3,tag=!her4,tag=!her5,tag=!her6] minecraft:add_stats_hero3",
+                            "event entity @a[tag=her0,tag=her1,tag=!her2,tag=!her3,tag=!her4,tag=!her5,tag=!her6] minecraft:add_stats_hero2",
+                            "event entity @a[tag=her0,tag=!her1,tag=!her2,tag=!her3,tag=!her4,tag=!her5,tag=!her6] minecraft:add_stats_hero1",
+                            "event entity @a[tag=!her0,tag=!her1,tag=!her2,tag=!her3,tag=!her4,tag=!her5,tag=!her6] minecraft:add_stats_hero0",
+							"execute at @a[tag=!her6] run kill @e[type=npc,tag=skill_menu_npc,c=1]"
+                        ]
+                    },
+                    {
+                        "name": "§c暗視向上",
+                        "commands": [
+							"execute at @a[tag=nig0] run dialogue change @e[type=npc,tag=skill_menu_npc,c=1] error_message",
+							"execute at @a[tag=nig0] run event entity @a minecraft:open_error_message_dialog",
+                            "event entity @a[tag=!nig0] minecraft:add_stats_night0",
+							"execute at @a[tag=!nig0] run kill @e[type=npc,tag=skill_menu_npc,c=1]"
+                        ]
+                    },
+                    {
+                        "name": "§a閉じる",
+                        "commands": [
+							"kill @e[type=npc,tag=skill_menu_npc]"
+						]
+                    }
+                ]
+            },
+			{
+                "scene_tag": "error_message",
+                "npc_name": "§6エラー",
+                "text": "§6それは最大レベルまで上がっています。",
+                "buttons": [                    
+                    {
+                        "name": "§6戻る",
+                        "commands": [
+							"dialogue change @e[type=npc,tag=skill_menu_npc,c=1] skill_menu",
+							"execute at @a run event entity @a minecraft:open_skill_menu_dialog"
+						]
+                    },
+					{
+                        "name": "§a閉じる",
+                        "commands": [
+							""
+						]
+                    }
+                ]
+            }
+        ]
+    }
+}

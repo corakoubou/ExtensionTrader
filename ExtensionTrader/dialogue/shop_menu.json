@@ -1,0 +1,195 @@
+{
+    "format_version": "1.17",
+    "minecraft:npc_dialogue": {
+        "scenes": [
+            {
+                "scene_tag": "shop_menu",
+                "npc_name": "§6ショップ選択",
+                "text": "§6強化する召喚する村人を選んでください。",
+                "buttons": [
+                    {
+                        "name": "§c農業商人",
+                        "commands": [
+							"summon villager ~ ~ ~ ~ ~ minecraft:become_farmer",
+							"tag @e[type=villager,c=1] add shop_villager",
+							"execute at @s run kill @e[type=npc,tag=shop_menu_npc,c=1]"
+                        ]
+                    },
+                    {
+                        "name": "§c武器商人",
+                        "commands": [
+							"summon villager ~ ~ ~ ~ ~ minecraft:become_weaponsmith",
+							"tag @e[type=villager,c=1] add shop_villager",
+							"execute at @s run kill @e[type=npc,tag=shop_menu_npc,c=1]"
+                        ]
+                    },
+                    {
+                        "name": "§c防具商人",
+                        "commands": [
+							"summon villager ~ ~ ~ ~ ~ minecraft:become_armorer",
+							"tag @e[type=villager,c=1] add shop_villager",
+							"execute at @s run kill @e[type=npc,tag=shop_menu_npc,c=1]"
+                        ]
+                    },
+                    {
+                        "name": "§c道具商人",
+                        "commands": [
+							"summon villager ~ ~ ~ ~ ~ minecraft:become_toolsmith",
+							"tag @e[type=villager,c=1] add shop_villager",
+							"execute at @s run kill @e[type=npc,tag=shop_menu_npc,c=1]"
+                        ]
+                    },
+					{
+                        "name": "§6進む",
+                        "commands": [
+							"dialogue change @e[type=npc,tag=shop_menu_npc,c=1] shop_menu_second_page",
+							"execute at @a run event entity @a minecraft:open_second_shop_menu_dialog"
+						]
+                    },
+                    {
+                        "name": "§a閉じる",
+                        "commands": [
+							"kill @e[type=npc,tag=shop_menu_npc]",
+							"execute at @s run kill @e[type=npc,tag=shop_menu_npc,c=1]"
+						]
+                    }
+                ]
+            },
+			{
+                "scene_tag": "shop_menu_second_page",
+                "npc_name": "§6二ページ目ショップ選択",
+                "text": "§6強化する召喚する村人を選んでください。",
+                "buttons": [  
+					{
+                        "name": "§c肉屋商人",
+                        "commands": [
+							"summon villager ~ ~ ~ ~ ~ minecraft:become_butcher",
+							"tag @e[type=villager,c=1] add shop_villager",
+							"execute at @s run kill @e[type=npc,tag=shop_menu_npc,c=1]"
+                        ]
+                    },
+					{
+                        "name": "§c釣師商人",
+                        "commands": [
+							"summon villager ~ ~ ~ ~ ~ minecraft:become_fisherman",
+							"tag @e[type=villager,c=1] add shop_villager",
+							"execute at @s run kill @e[type=npc,tag=shop_menu_npc,c=1]"
+                        ]
+                    },
+					{
+                        "name": "§c築材商人",
+                        "commands": [
+							"summon villager ~ ~ ~ ~ ~ minecraft:become_mason",
+							"tag @e[type=villager,c=1] add shop_villager",
+							"execute at @s run kill @e[type=npc,tag=shop_menu_npc,c=1]"
+                        ]
+                    },
+					{
+                        "name": "§c羊商人",
+                        "commands": [
+							"summon villager ~ ~ ~ ~ ~ minecraft:become_sheperd",
+							"tag @e[type=villager,c=1] add shop_villager",
+							"execute at @s run kill @e[type=npc,tag=shop_menu_npc,c=1]"
+                        ]
+                    },
+					{
+                        "name": "§6進む",
+                        "commands": [
+							"dialogue change @e[type=npc,tag=shop_menu_npc,c=1] shop_menu_third_page",
+							"execute at @a run event entity @a minecraft:open_third_shop_menu_dialog"
+						]
+                    },
+                    {
+                        "name": "§a閉じる",
+                        "commands": [
+							"kill @e[type=npc,tag=shop_menu_npc]",
+							"execute at @s run kill @e[type=npc,tag=shop_menu_npc,c=1]"
+						]
+                    }
+                ]
+            },
+			{
+                "scene_tag": "shop_menu_third_page",
+                "npc_name": "§6三ページ目ショップ選択",
+                "text": "§6強化する召喚する村人を選んでください。",
+                "buttons": [
+					{
+                        "name": "§c矢師商人",
+                        "commands": [
+							"summon villager ~ ~ ~ ~ ~ minecraft:become_fletcher",
+							"tag @e[type=villager,c=1] add shop_villager",
+							"execute at @s run kill @e[type=npc,tag=shop_menu_npc,c=1]"
+                        ]
+                    },
+					{
+                        "name": "§c革細工商人",
+                        "commands": [
+							"summon villager ~ ~ ~ ~ ~ minecraft:become_leatherworker",
+							"tag @e[type=villager,c=1] add shop_villager",
+							"execute at @s run kill @e[type=npc,tag=shop_menu_npc,c=1]"
+                        ]
+                    },
+					{
+                        "name": "§c聖書商人",
+                        "commands": [
+							"summon villager ~ ~ ~ ~ ~ minecraft:become_cleric",
+							"tag @e[type=villager,c=1] add shop_villager",
+							"execute at @s run kill @e[type=npc,tag=shop_menu_npc,c=1]"
+                        ]
+                    },
+					{
+                        "name": "§c司書商人",
+                        "commands": [
+							"summon villager ~ ~ ~ ~ ~ minecraft:become_librarian",
+							"tag @e[type=villager,c=1] add shop_villager",
+							"execute at @s run kill @e[type=npc,tag=shop_menu_npc,c=1]"
+                        ]
+                    },
+					{
+                        "name": "§6進む",
+                        "commands": [
+							"dialogue change @e[type=npc,tag=shop_menu_npc,c=1] shop_menu_forth_page",
+							"execute at @a run event entity @a minecraft:open_forth_shop_menu_dialog"
+						]
+                    },
+                    {
+                        "name": "§a閉じる",
+                        "commands": [
+							"kill @e[type=npc,tag=shop_menu_npc]",
+							"execute at @s run kill @e[type=npc,tag=shop_menu_npc,c=1]"
+						]
+                    }
+                ]
+            },
+			{
+                "scene_tag": "shop_menu_forth_page",
+                "npc_name": "§6四ページ目ショップ選択",
+                "text": "§6強化する召喚する村人を選んでください。",
+                "buttons": [
+					{
+                        "name": "§c製図商人",
+                        "commands": [
+							"summon villager ~ ~ ~ ~ ~ minecraft:become_cartographer",
+							"tag @e[type=villager,c=1] add shop_villager",
+							"execute at @s run kill @e[type=npc,tag=shop_menu_npc,c=1]"
+                        ]
+                    },
+                    {
+                        "name": "§6最初に戻る",
+                        "commands": [
+							"dialogue change @e[type=npc,tag=shop_menu_npc,c=1] shop_menu",
+							"execute at @a run event entity @a minecraft:open_shop_menu_dialog"
+						]
+                    },
+                    {
+                        "name": "§a閉じる",
+                        "commands": [
+							"kill @e[type=npc,tag=shop_menu_npc]",
+							"execute at @s run kill @e[type=npc,tag=shop_menu_npc,c=1]"
+						]
+                    }
+                ]
+            }
+        ]
+    }
+}

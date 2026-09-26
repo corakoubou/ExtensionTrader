@@ -1,0 +1,1 @@
+kill @e[tag=shop_villager,c=1]

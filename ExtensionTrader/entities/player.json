@@ -1,0 +1,880 @@
+{
+    "format_version": "1.21.0",
+    "minecraft:entity": {
+        "description": {
+            "identifier": "minecraft:player",
+            "spawn_category": "creature",
+            "is_spawnable": false,
+            "is_summonable": false
+        },
+
+        "component_groups": {
+			
+			"minecraft:attack_level_1": {"minecraft:attack": {"damage": 1}},
+			"minecraft:attack_level_2": {"minecraft:attack": {"damage": 2}},
+			"minecraft:attack_level_3": {"minecraft:attack": {"damage": 3}},
+			"minecraft:attack_level_4": {"minecraft:attack": {"damage": 4}},
+			"minecraft:attack_level_5": {"minecraft:attack": {"damage": 5}},
+			"minecraft:attack_level_6": {"minecraft:attack": {"damage": 6}},
+			"minecraft:attack_level_7": {"minecraft:attack": {"damage": 7}},
+			"minecraft:attack_level_8": {"minecraft:attack": {"damage": 8}},
+			"minecraft:attack_level_9": {"minecraft:attack": {"damage": 9}},
+			"minecraft:attack_level_10": {"minecraft:attack": {"damage": 10}},
+			
+            "minecraft:add_raid_omen": {
+                "minecraft:spell_effects": {
+                    "add_effects": [{
+                            "effect": "raid_omen",
+                            "duration": 30,
+                            "display_on_screen_animation": true
+                        }
+                    ],
+                    "remove_effects": "bad_omen"
+                },
+                "minecraft:timer": {
+                    "time": [0.0, 0.0],
+                    "looping": false,
+                    "time_down_event": {
+                        "event": "minecraft:clear_add_raid_omen",
+                        "target": "self"
+                    }
+                }
+            },
+            "minecraft:clear_raid_omen_spell_effect": {
+                "minecraft:spell_effects": {}
+            },
+            "minecraft:raid_trigger": {
+                "minecraft:raid_trigger": {
+                    "triggered_event": {
+                        "event": "minecraft:remove_raid_trigger",
+                        "target": "self"
+                    }
+                }
+            }
+        },
+
+        "components": {
+            "minecraft:experience_reward": {
+                "on_death": "Math.Min(query.player_level * 7, 100)"
+            },
+            "minecraft:type_family": {
+                "family": ["player"]
+            },
+            "minecraft:is_hidden_when_invisible": {},
+            "minecraft:loot": {
+                "table": "loot_tables/empty.json"
+            },
+            "minecraft:collision_box": {
+                "width": 0.6,
+                "height": 1.8
+            },
+            "minecraft:can_climb": {},
+            "minecraft:movement": {
+                "value": 0.1
+            },
+            "minecraft:hurt_on_condition": {
+                "damage_conditions": [{
+                        "filters": {
+                            "test": "in_lava",
+                            "subject": "self",
+                            "operator": "==",
+                            "value": true
+                        },
+                        "cause": "lava",
+                        "damage_per_tick": 4
+                    }
+                ]
+            },
+
+            "minecraft:exhaustion_values": {
+                "heal": 3,
+                "jump": 0.05,
+                "sprint_jump": 0.2,
+                "mine": 0.005,
+                "attack": 0.1,
+                "damage": 0.1,
+                "walk": 0.0,
+                "sprint": 0.1,
+                "swim": 0.01
+            },
+            "minecraft:player.saturation": {
+                "value": 5,
+                "max": 1000
+            },
+            "minecraft:player.exhaustion": {
+                "value": 0,
+                "max": 2000
+            },
+            "minecraft:player.level": {
+                "value": 0,
+                "max": 24791
+            },
+            "minecraft:player.experience": {
+                "value": 0,
+                "max": 1
+            },
+            "minecraft:breathable": {
+                "total_supply": 15,
+                "suffocate_time": -1,
+                "inhale_time": 3.75,
+                "generates_bubbles": false
+            },
+            "minecraft:nameable": {
+                "always_show": true,
+                "allow_name_tag_renaming": false
+            },
+            "minecraft:physics": {
+                "push_towards_closest_space": true
+            },
+            "minecraft:pushable": {
+                "is_pushable": false,
+                "is_pushable_by_piston": true
+            },
+            "minecraft:insomnia": {
+                "days_until_insomnia": 3
+            },
+            "minecraft:rideable": {
+                "seat_count": 2,
+                "family_types": [
+                    "parrot_tame"
+                ],
+                "pull_in_entities": true,
+                "seats": [{
+                        "position": [0.4, -0.2, -0.1],
+                        "min_rider_count": 0,
+                        "max_rider_count": 0,
+                        "lock_rider_rotation": 0
+                    }, {
+                        "position": [-0.4, -0.2, -0.1],
+                        "min_rider_count": 1,
+                        "max_rider_count": 2,
+                        "lock_rider_rotation": 0
+                    }
+                ]
+            },
+            "minecraft:conditional_bandwidth_optimization": {},
+            "minecraft:block_climber": {},
+            "minecraft:environment_sensor": {
+                "triggers": [{
+                        "filters": {
+                            "all_of": [{
+                                    "test": "has_mob_effect",
+                                    "subject": "self",
+                                    "value": "bad_omen"
+                                }, {
+                                    "test": "is_in_village",
+                                    "subject": "self",
+                                    "value": true
+                                }
+                            ]
+                        },
+                        "event": "minecraft:gain_raid_omen"
+                    },
+					{
+						"filters": {
+                            "all_of": [{
+                                    "test": "has_tag",
+                                    "subject": "self",
+                                    "value": "common"
+                                }
+                            ]
+                        },
+                        "event": "minecraft:common"
+                    },
+					{
+                        "filters": {
+                            "all_of": [{
+                                    "test": "has_tag",
+                                    "subject": "self",
+                                    "value": "toriko"
+                                }
+                            ]
+                        },
+                        "event": "minecraft:toriko_level"
+                    },
+					{
+                        "filters": {
+                            "all_of": [{
+                                    "test": "has_tag",
+                                    "subject": "self",
+                                    "value": "zebura"
+                                }
+                            ]
+                        },
+                        "event": "minecraft:zebura_level"
+                    },
+					{
+                        "filters": {
+                            "all_of": [{
+                                    "test": "has_tag",
+                                    "subject": "self",
+                                    "value": "coco"
+                                }
+                            ]
+                        },
+                        "event": "minecraft:coco_level"
+                    },
+					{
+                        "filters": {
+                            "all_of": [{
+                                    "test": "actor_health",
+                                    "subject": "self",
+                                    "operator": "<",
+                                    "value": 6
+                                }
+                            ]
+                        },
+                        "event": "minecraft:auto_fazi"
+                    },
+					{
+                        "filters": {
+                            "all_of": [{
+                                    "test": "actor_health",
+                                    "subject": "self",
+                                    "operator": ">",
+                                    "value": 0
+                                }
+                            ]
+                        },
+                        "event": "minecraft:await_effect"
+                    }
+                ]
+            },
+            "minecraft:damage_sensor": {
+                "triggers": [
+					{
+					  "cause": "entity_explosion",
+					  "deals_damage": false,
+					  "on_damage": {
+						"filters": {
+						  "test": "has_tag",
+						  "value": "zebura"
+						}
+					  }
+					},
+					{
+						"on_damage": {
+							"filters": {
+								"all_of": [
+									{
+										"test": "has_tag",
+										"subject": "self",
+										"value": "coco"
+									}
+								]
+							},
+							"event": "minecraft:poison_skin"
+						}
+					},
+					{
+						"on_damage": {
+							"filters": {
+								"all_of": [
+									{
+										"test": "has_tag",
+										"subject": "self",
+										"value": "zebura"
+									},
+									{
+										"test": "has_damage",
+										"subject": "self",
+										"value": "magic"
+									}
+								  ]
+							},
+							"event": "minecraft:sound_armor"
+						}
+					},
+					{
+						"on_damage": {
+							"filters": {
+								"all_of": [
+									{
+										"test": "has_tag",
+										"subject": "self",
+										"value": "toriko"
+									}
+								]
+							},
+							"event": "minecraft:folk_armor"
+						}
+					}
+				]
+            }
+        },
+
+        "events": {
+			
+			"minecraft:await_effect": {
+                "queue_command": {
+                    "command": [
+					
+						"execute if score @s strength matches 0..1000 run event entity @a minecraft:add_component_attack_level_1",
+						"execute if score @s strength matches 1001..2000 run event entity @a minecraft:add_component_attack_level_2",
+						"execute if score @s strength matches 2001..3500 run event entity @a minecraft:add_component_attack_level_3",
+						"execute if score @s strength matches 3501..5500 run event entity @a minecraft:add_component_attack_level_4",
+						"execute if score @s strength matches 5501..8000 run event entity @a minecraft:add_component_attack_level_5",
+						"execute if score @s strength matches 8001..11000 run event entity @a minecraft:add_component_attack_level_6",
+						"execute if score @s strength matches 11001..14000 run event entity @a minecraft:add_component_attack_level_7",
+						"execute if score @s strength matches 14001..18000 run event entity @a minecraft:add_component_attack_level_8",
+						"execute if score @s strength matches 18001..24000 run event entity @a minecraft:add_component_attack_level_9",
+						"execute if score @s strength matches 22001..999999 run event entity @a minecraft:add_component_attack_level_10",
+						
+						"execute if score @s mineing matches 1001..2000 run tag @a add eff0",
+						"execute if score @s mineing matches 2001..3500 run tag @a add eff1",
+						"execute if score @s mineing matches 3501..5500 run tag @a add eff2",
+						"execute if score @s mineing matches 5501..8000 run tag @a add eff3",
+						"execute if score @s mineing matches 8001..99000 run tag @a add eff4",
+					
+						"execute as @e[tag=shop_villager] at @s run tp @s ~ ~ ~",
+						
+						"execute at @a run tp @e[r=15,type=xp_orb] @a",
+						
+						"execute at @a run enchant @s[tag=for0] Fortune 1",
+						"execute at @a run enchant @s[tag=for1] Fortune 2",
+						"execute at @a run enchant @s[tag=for2] Fortune 3",
+						
+						"execute at @a run enchant @s[tag=loo0] Looting 1",
+						"execute at @a run enchant @s[tag=loo1] Looting 2",
+						"execute at @a run enchant @s[tag=loo2] Looting 3",
+						
+						"execute at @a run enchant @s[tag=eff0] Efficiency 1",
+						"execute at @a run enchant @s[tag=eff1] Efficiency 2",
+						"execute at @a run enchant @s[tag=eff2] Efficiency 3",
+						"execute at @a run enchant @s[tag=eff3] Efficiency 4",
+						"execute at @a run enchant @s[tag=eff4] Efficiency 5",
+						
+						"execute at @a run effect @s[tag=res0] resistance 60 0 true",
+						"execute at @a run effect @s[tag=res0,tag=res1] resistance 60 1 true",
+						"execute at @a run effect @s[tag=res0,tag=res1,tag=res2] resistance 60 2 true",
+						"execute at @a run effect @s[tag=str0] strength 60 0 true",
+						
+						"execute at @a run effect @s[tag=str0,tag=str1] strength 60 1 true",
+						"execute at @a run effect @s[tag=str0,tag=str1,tag=str2] strength 60 2 true",
+						"execute at @a run effect @s[tag=str0,tag=str1,tag=str2,tag=str3] strength 60 3 true",
+						
+						"execute at @a run effect @s[tag=has0] haste 60 0 true",
+						"execute at @a run effect @s[tag=has0,tag=has1] haste 60 1 true",
+						"execute at @a run effect @s[tag=has0,tag=has1,tag=has2] haste 60 2 true",
+						"execute at @a run effect @s[tag=has0,tag=has1,tag=has2,tag=has3] haste 60 3 true",
+						"execute at @a run effect @s[tag=has0,tag=has1,tag=has2,tag=has3,tag=has4] haste 60 4 true",
+						"execute at @a run effect @s[tag=has0,tag=has1,tag=has2,tag=has3,tag=has4,tag=has5] haste 60 5 true",
+						"execute at @a run effect @s[tag=has0,tag=has1,tag=has2,tag=has3,tag=has4,tag=has5,tag=has6] haste 60 6 true",
+						
+						"execute at @a run effect @s[tag=her0] village_hero 60 0 true",
+						"execute at @a run effect @s[tag=her0,tag=her1] village_hero 60 1 true",
+						"execute at @a run effect @s[tag=her0,tag=her1,tag=her2] village_hero 60 2 true",
+						"execute at @a run effect @s[tag=her0,tag=her1,tag=her2,tag=her3] village_hero 60 3 true",
+						"execute at @a run effect @s[tag=her0,tag=her1,tag=her2,tag=her3,tag=her4] village_hero 60 4 true",
+						"execute at @a run effect @s[tag=her0,tag=her1,tag=her2,tag=her3,tag=her4,tag=her5] village_hero 60 5 true",
+						"execute at @a run effect @s[tag=her0,tag=her1,tag=her2,tag=her3,tag=her4,tag=her5,tag=her6] village_hero 60 6 true",
+						
+						"execute at @a run effect @s[tag=nig0] night_vision 60 0 true"
+                    ]
+                }
+            },
+			
+			"minecraft:villager_meeting": {
+                "queue_command": {
+                    "command": [
+						"execute at @a run tp @e[type=villager] ~ ~ ~"
+                    ]
+                }
+            },
+						
+			"minecraft:add_stats_resistance0": {"queue_command": {"command": ["say 防御力UP小の強化","execute at @a run tag @a add res0"]}},
+			"minecraft:add_stats_resistance1": {"queue_command": {"command": ["say 防御力UP中の強化","execute at @a run tag @a add res1"]}},
+			"minecraft:add_stats_resistance2": {"queue_command": {"command": ["say 防御力UP大の強化","execute at @a run tag @a add res2"]}},
+			
+			"minecraft:add_stats_power0": {"queue_command": {"command": ["say 攻撃力UP小の強化","execute at @a run tag @a add str0"]}},
+			"minecraft:add_stats_power1": {"queue_command": {"command": ["say 攻撃力UP中の強化","execute at @a run tag @a add str1"]}},
+			"minecraft:add_stats_power2": {"queue_command": {"command": ["say 攻撃力UP大の強化","execute at @a run tag @a add str2"]}},
+			"minecraft:add_stats_power3": {"queue_command": {"command": ["say 攻撃力UP特大の強化","execute at @a run tag @a add str3"]}},
+			
+			"minecraft:add_stats_night0": {"queue_command": {"command": ["say 暗視の強化","execute at @a run tag @a add nig0"]}},
+			
+			"minecraft:add_stats_haste0": {"queue_command": {"command": ["say 採掘速度UP小の強化","execute at @a run tag @a add has0"]}},
+			"minecraft:add_stats_haste1": {"queue_command": {"command": ["say 採掘速度UP中の強化","execute at @a run tag @a add has1"]}},
+			"minecraft:add_stats_haste2": {"queue_command": {"command": ["say 採掘速度UP大の強化","execute at @a run tag @a add has2"]}},
+			"minecraft:add_stats_haste3": {"queue_command": {"command": ["say 採掘速度UP特大の強化","execute at @a run tag @a add has3"]}},
+			"minecraft:add_stats_haste4": {"queue_command": {"command": ["say 採掘速度UP極大の強化","execute at @a run tag @a add has4"]}},
+			"minecraft:add_stats_haste5": {"queue_command": {"command": ["say 採掘速度UP超極大の強化","execute at @a run tag @a add has5"]}},
+			"minecraft:add_stats_haste6": {"queue_command": {"command": ["say 採掘速度UP新超極大の強化","execute at @a run tag @a add has6"]}},
+			
+			"minecraft:add_stats_hero0": {"queue_command": {"command": ["say 交易強化UP小の強化","execute at @a run tag @a add her0"]}},
+			"minecraft:add_stats_hero1": {"queue_command": {"command": ["say 交易強化UP中の強化","execute at @a run tag @a add her1"]}},
+			"minecraft:add_stats_hero2": {"queue_command": {"command": ["say 交易強化UP大の強化","execute at @a run tag @a add her2"]}},
+			"minecraft:add_stats_hero3": {"queue_command": {"command": ["say 交易強化UP特大の強化","execute at @a run tag @a add her3"]}},
+			"minecraft:add_stats_hero4": {"queue_command": {"command": ["say 交易強化UP極大の強化","execute at @a run tag @a add her4"]}},
+			"minecraft:add_stats_hero5": {"queue_command": {"command": ["say 交易強化UP超極大の強化","execute at @a run tag @a add her5"]}},
+			"minecraft:add_stats_hero6": {"queue_command": {"command": ["say 交易強化UP新超極大の強化","execute at @a run tag @a add her6"]}},
+			
+			
+			
+			"minecraft:auto_fazi": {
+                "queue_command": {
+                    "command": [
+						"execute at @a run effect @s strength 60 4 true"
+                    ]
+                }
+            },
+			
+			"minecraft:set_stats": {
+                "queue_command": {
+                    "command": [
+						"scoreboard objectives add strength dummy 筋力",
+						"scoreboard objectives add stamina dummy スタミナ",
+						"scoreboard objectives add stamina_max dummy スタミナ最大値",
+						"scoreboard objectives add mineing dummy 採掘能力値",
+						"scoreboard players set @s strength 1",
+						"scoreboard players set @s stamina 100",
+						"scoreboard players set @s stamina_max 100",
+						"scoreboard players set @s mineing 0"
+                    ]
+                }
+            },
+			
+			"minecraft:tag_coco": {
+                "queue_command": {
+                    "command": [
+                        "tag @a add coco",
+						"tag @a add common",
+						"scoreboard objectives add strength dummy 筋力",
+						"scoreboard objectives add stamina dummy スタミナ",
+						"scoreboard objectives add stamina_max dummy スタミナ最大値",
+						"scoreboard objectives add mineing dummy 採掘能力値",
+						"scoreboard players set @s strength 1",
+						"scoreboard players set @s stamina 100",
+						"scoreboard players set @s stamina_max 100",
+						"scoreboard players set @s mineing 0",
+						"gamerule mobgriefing false",
+						"gamerule randomtickspeed 2",
+						"event entity @a minecraft:add_stats_haste0",
+						"event entity @a minecraft:add_stats_haste1",
+						"event entity @a minecraft:add_stats_night0",
+						"event entity @a minecraft:add_stats_hero0",
+						"execute at @a run effect @s regeneration 300 0 true",
+						"execute at @a run effect @s resistance 120 0 true"
+                    ]
+                }
+            },
+			
+			"minecraft:tag_coco": {
+                "queue_command": {
+                    "command": [
+                        "tag @a add coco",
+						"tag @a add common",
+						"scoreboard objectives add strength dummy 筋力",
+						"scoreboard objectives add stamina dummy スタミナ",
+						"scoreboard objectives add stamina_max dummy スタミナ最大値",
+						"scoreboard objectives add mineing dummy 採掘能力値",
+						"scoreboard players set @s strength 1",
+						"scoreboard players set @s stamina 100",
+						"scoreboard players set @s stamina_max 100",
+						"scoreboard players set @s mineing 0",
+						"gamerule mobgriefing false",
+						"gamerule randomtickspeed 2",
+						"event entity @a minecraft:add_stats_haste0",
+						"event entity @a minecraft:add_stats_haste1",
+						"event entity @a minecraft:add_stats_night0",
+						"event entity @a minecraft:add_stats_hero0",
+						"execute at @a run effect @s regeneration 300 0 true",
+						"execute at @a run effect @s resistance 120 0 true"
+                    ]
+                }
+            },
+			
+			"minecraft:tag_toriko": {
+                "queue_command": {
+                    "command": [
+                        "tag @a add toriko",
+						"tag @a add common",
+						"gamerule mobgriefing false",
+						"gamerule randomtickspeed 2",
+						"event entity @a minecraft:add_stats_power0",
+						"event entity @a minecraft:add_stats_power1",
+						"event entity @a minecraft:add_stats_haste0",
+						"event entity @a minecraft:add_stats_haste1",
+						"execute at @a run effect @s regeneration 150 0 true",
+						"execute at @a run effect @s resistance 120 0 true"
+                    ]
+                }
+            },
+			
+			"minecraft:tag_zebura": {
+                "queue_command": {
+                    "command": [
+                        "tag @a add zebura",
+						"tag @a add common",
+						"scoreboard objectives add strength dummy 筋力",
+						"scoreboard objectives add stamina dummy スタミナ",
+						"scoreboard objectives add stamina_max dummy スタミナ最大値",
+						"scoreboard objectives add mineing dummy 採掘能力値",
+						"scoreboard players set @s strength 1",
+						"scoreboard players set @s stamina 100",
+						"scoreboard players set @s stamina_max 100",
+						"scoreboard players set @s mineing 0",
+						
+						"gamerule mobgriefing false",
+						"gamerule randomtickspeed 2",
+						"event entity @a minecraft:add_stats_power0",
+						"event entity @a minecraft:add_stats_power1",
+						"execute at @a run give @s snowball 96",
+						"execute at @a run give @s ender_pearl 48",
+						"execute at @a run effect @s regeneration 100 0 true",
+						"execute at @a run effect @s resistance 120 0 true"
+                    ]
+                }
+            },
+			
+			"minecraft:power_up": {
+                "queue_command": {
+                    "command": [
+                        "execute at @a run effect @s health_boost 0 0 true",
+						"summon npc ~ ~ ~",
+						"tag @e[type=npc,c=1] add skill_menu_npc",
+						"event entity @a minecraft:open_skill_menu_dialog"
+                    ]
+                }
+            },
+			
+			"minecraft:shop": {
+                "queue_command": {
+                    "command": [
+						"summon npc ~ ~ ~",
+						"tag @e[type=npc,c=1] add shop_menu_npc",
+						"event entity @a minecraft:open_shop_menu_dialog"
+                    ]
+                }
+            },
+			
+			"minecraft:set_telepot": {
+                "queue_command": {
+                    "command": [
+						"kill @e[type=npc,tag=telepot_npc]",
+						"tickingarea remove telepot_area",
+						"summon npc ~ ~ ~",
+						"effect @e[c=1,type=npc] invisibility 10 0 true",
+						"tag @e[type=npc,c=1] add telepot_npc",
+						"tickingarea add ~2 ~2 ~2 ~-2 ~-2 ~-2 telepot_area"
+                    ]
+                }
+            },
+			
+			"minecraft:get_telepot": {
+                "queue_command": {
+                    "command": [
+						"tp @s @e[type=npc,tag=telepot_npc]",
+						"kill @e[type=npc,tag=telepot_npc]",
+						"tickingarea remove telepot_area"
+                    ]
+                }
+            },
+			
+			"minecraft:open_shop_menu_dialog": {
+                "queue_command": {
+                    "command": [
+						"dialogue open @e[type=npc,tag=shop_menu_npc,c=1] @s shop_menu"
+                    ]
+                }
+            },
+			
+			"minecraft:open_second_shop_menu_dialog": {
+                "queue_command": {
+                    "command": [
+						"dialogue open @e[type=npc,tag=shop_menu_npc,c=1] @s shop_menu_second_page"
+                    ]
+                }
+            },
+			
+			"minecraft:open_third_shop_menu_dialog": {
+                "queue_command": {
+                    "command": [
+						"dialogue open @e[type=npc,tag=shop_menu_npc,c=1] @s shop_menu_third_page"
+                    ]
+                }
+            },
+			
+			"minecraft:open_forth_shop_menu_dialog": {
+                "queue_command": {
+                    "command": [
+						"dialogue open @e[type=npc,tag=shop_menu_npc,c=1] @s shop_menu_forth_page"
+                    ]
+                }
+            },
+			
+			"minecraft:open_skill_menu_dialog": {
+                "queue_command": {
+                    "command": [
+						"dialogue open @e[type=npc,tag=skill_menu_npc,c=1] @s skill_menu"
+                    ]
+                }
+            },
+
+			"minecraft:open_error_message_dialog": {
+                "queue_command": {
+                    "command": [
+						"dialogue open @e[type=npc,tag=skill_menu_npc,c=1] @s error_message"
+                    ]
+                }
+            },
+			
+			"minecraft:common": {
+                "queue_command": {
+                    "command": [
+                        "execute at @a run effect @e[r=50,type=!player] strength 60 2 true",
+						"execute at @a run effect @e[r=50,type=villager] resistance 60 4 true",
+						"execute at @a run effect @e[r=50,type=copper_golem] resistance 60 4 true",
+                        "execute at @a run effect @e[r=50,type=!player] resistance 60 3 true"
+                    ]
+                }
+            },
+			
+			"minecraft:coco_level": {
+                "queue_command": {
+                    "command": [
+						"execute at @a run effect @s jump_boost 100 1 true",
+                        "execute at @a run effect @s health_boost 100 49 true"
+                    ]
+                }
+            },
+			
+			"minecraft:zebura_level": {
+                "queue_command": {
+                    "command": [
+                        "execute at @a run effect @s health_boost 100 49 true"
+                    ]
+                }
+            },
+			
+			"minecraft:toriko_level": {
+                "queue_command": {
+                    "command": [
+                        "execute at @a run effect @s health_boost 100 49 true",
+						"execute at @a run effect @s jump_boost 100 1 true"
+                    ]
+                }
+            },
+			
+			"minecraft:poison_skin": {
+                "queue_command": {
+                    "command": [
+					    "say poison_skin",
+                        "execute at @a run effect @e[family=mob,family=!villager,family=!irongolem,r=15,rm=1] weakness 120 0 false",
+                        "execute at @a[l=5] run effect @e[family=mob,family=!villager,family=!irongolem,r=15,rm=1] wither 15 255 false",
+                        "execute at @a[lm=6,l=15] run effect @e[family=mob,family=!villager,family=!irongolem,r=20,rm=1] wither 20 255 false",
+                        "execute at @a[lm=16,l=20] run effect @e[family=mob,family=!villager,family=!irongolem,r=25,rm=1] wither 25 255 false",
+                        "execute at @a[lm=21,l=25] run effect @e[family=mob,family=!villager,family=!irongolem,r=30,rm=1] wither 30 255 false",
+                        "execute at @a[lm=26,l=30] run effect @e[family=mob,family=!villager,family=!irongolem,r=35,rm=1] wither 35 255 false",
+                        "execute at @a[lm=31,l=33] run effect @e[family=mob,family=!villager,family=!irongolem,r=40,rm=1] wither 40 255 false",
+                        "execute at @a[lm=34,l=100] run effect @e[family=mob,family=!villager,family=!irongolem,r=45,rm=1] wither 50 255 false"
+                    ]
+                }
+            },
+			
+			"minecraft:sound_armor": {
+                "queue_command": {
+                    "command": [
+						"say sound_armor",
+                        "execute at @a[l=5] run damage @e[family=mob,r=60,rm=1] 1 fall",
+                        "execute at @a[lm=6,l=15] run damage @e[family=mob,r=60,rm=1] 2 fall",
+                        "execute at @a[lm=16,l=20] run damage @e[family=mob,r=60,rm=1] 3 fall",
+                        "execute at @a[lm=21,l=25] run damage @e[family=mob,r=65,rm=1] 4 fall",
+                        "execute at @a[lm=26,l=30] run damage @e[family=mob,r=60,rm=1] 5 fall",
+                        "execute at @a[lm=31,l=33] run damage @e[family=mob,r=60,rm=1] 6 fall",
+                        "execute at @a[lm=34,l=35] run damage @e[family=mob,r=60,rm=1] 7 fall",
+                        "execute at @a[lm=36,l=37] run damage @e[family=mob,r=60,rm=1] 8 fall",
+                        "execute at @a[lm=38,l=39] run damage @e[family=mob,r=60,rm=1] 9 fall",
+                        "execute at @a[lm=40,l=41] run damage @e[family=mob,r=60,rm=1] 10 fall",
+                        "execute at @a[lm=42,l=43] run damage @e[family=mob,r=60,rm=1] 11 fall",
+                        "execute at @a[lm=44,l=45] run damage @e[family=mob,r=60,rm=1] 12 fall",
+                        "execute at @a[lm=46,l=47] run damage @e[family=mob,r=60,rm=1] 13 fall",
+                        "execute at @a[lm=48,l=49] run damage @e[family=mob,r=60,rm=1] 14 fall",
+                        "execute at @a[lm=50,l=51] run damage @e[family=mob,r=60,rm=1] 15 fall",
+                        "execute at @a[lm=52,l=53] run damage @e[family=mob,r=60,rm=1] 16 fall",
+                        "execute at @a[lm=54,l=55] run damage @e[family=mob,r=60,rm=1] 17 fall",
+                        "execute at @a[lm=56,l=57] run damage @e[family=mob,r=60,rm=1] 18 fall",
+                        "execute at @a[lm=58,l=59] run damage @e[family=mob,r=60,rm=1] 19 fall",
+                        "execute at @a[lm=60,l=61] run damage @e[family=mob,r=60,rm=1] 20 fall",
+                        "execute at @a[lm=62,l=63] run damage @e[family=mob,r=60,rm=1] 21 fall",
+                        "execute at @a[lm=64,l=65] run damage @e[family=mob,r=60,rm=1] 22 fall",
+                        "execute at @a[lm=66,l=67] run damage @e[family=mob,r=60,rm=1] 23 fall",
+                        "execute at @a[lm=68,l=69] run damage @e[family=mob,r=60,rm=1] 24 fall",
+                        "execute at @a[lm=70,l=71] run damage @e[family=mob,r=60,rm=1] 25 fall",
+                        "execute at @a[lm=72,l=73] run damage @e[family=mob,r=60,rm=1] 26 fall",
+                        "execute at @a[lm=74,l=100] run damage @e[family=mob,r=60,rm=1] 27 fall"
+                    ]
+                }
+            },
+			
+			"minecraft:folk_armor": {
+                "queue_command": {
+                    "command": [
+					    "say folk_armor",
+                        "execute at @a[l=5] run damage @e[family=monster,r=8,rm=1] 5 fall",
+                        "execute at @a[lm=6,l=15] run damage @e[family=monster,r=8,rm=1] 8 fall",
+                        "execute at @a[lm=16,l=20] run damage @e[family=monster,r=8,rm=1] 10 fall",
+                        "execute at @a[lm=21,l=25] run damage @e[family=monster,r=8,rm=1] 13 fall",
+                        "execute at @a[lm=26,l=30] run damage @e[family=monster,r=8,rm=1] 15 fall",
+                        "execute at @a[lm=31,l=32] run damage @e[family=monster,r=8,rm=1] 18 fall",
+                        "execute at @a[lm=33,l=34] run damage @e[family=monster,r=8,rm=1] 20 fall",
+                        "execute at @a[lm=35,l=36] run damage @e[family=monster,r=8,rm=1] 23 fall",
+                        "execute at @a[lm=37,l=38] run damage @e[family=monster,r=8,rm=1] 25 fall",
+                        "execute at @a[lm=39,l=40] run damage @e[family=monster,r=8,rm=1] 28 fall",
+                        "execute at @a[lm=41,l=42] run damage @e[family=monster,r=8,rm=1] 30 fall",
+                        "execute at @a[lm=43,l=44] run damage @e[family=monster,r=8,rm=1] 33 fall",
+                        "execute at @a[lm=45,l=46] run damage @e[family=monster,r=8,rm=1] 35 fall",
+                        "execute at @a[lm=47,l=48] run damage @e[family=monster,r=8,rm=1] 38 fall",
+                        "execute at @a[lm=49,l=50] run damage @e[family=monster,r=8,rm=1] 40 fall",
+                        "execute at @a[lm=51,l=52] run damage @e[family=monster,r=8,rm=1] 43 fall",
+                        "execute at @a[lm=53,l=54] run damage @e[family=monster,r=8,rm=1] 45 fall",
+                        "execute at @a[lm=55,l=56] run damage @e[family=monster,r=8,rm=1] 48 fall",
+                        "execute at @a[lm=57,l=58] run damage @e[family=monster,r=8,rm=1] 50 fall",
+                        "execute at @a[lm=59,l=60] run damage @e[family=monster,r=8,rm=1] 53 fall",
+                        "execute at @a[lm=61,l=62] run damage @e[family=monster,r=8,rm=1] 55 fall",
+                        "execute at @a[lm=63,l=64] run damage @e[family=monster,r=8,rm=1] 58 fall",
+                        "execute at @a[lm=65,l=66] run damage @e[family=monster,r=8,rm=1] 60 fall",
+                        "execute at @a[lm=67,l=68] run damage @e[family=monster,r=8,rm=1] 63 fall",
+                        "execute at @a[lm=69,l=70] run damage @e[family=monster,r=8,rm=1] 65 fall",
+                        "execute at @a[lm=71,l=72] run damage @e[family=monster,r=8,rm=1] 70 fall",
+                        "execute at @a[lm=73,l=74] run damage @e[family=monster,r=8,rm=1] 75 fall",
+                        "execute at @a[lm=75,l=76] run damage @e[family=monster,r=8,rm=1] 80 fall",
+                        "execute at @a[lm=77,l=78] run damage @e[family=monster,r=8,rm=1] 85 fall",
+                        "execute at @a[lm=79,l=80] run damage @e[family=monster,r=8,rm=1] 90 fall",
+                        "execute at @a[lm=81,l=82] run damage @e[family=monster,r=8,rm=1] 95 fall",
+                        "execute at @a[lm=83,l=84] run damage @e[family=monster,r=8,rm=1] 100 fall",
+                        "execute at @a[lm=85,l=86] run damage @e[family=monster,r=8,rm=1] 105 fall",
+                        "execute at @a[lm=87,l=88] run damage @e[family=monster,r=8,rm=1] 110 fall",
+                        "execute at @a[lm=89,l=90] run damage @e[family=monster,r=8,rm=1] 115 fall",
+                        "execute at @a[lm=91,l=92] run damage @e[family=monster,r=8,rm=1] 120 fall",
+                        "execute at @a[lm=93,l=94] run damage @e[family=monster,r=8,rm=1] 125 fall",
+                        "execute at @a[lm=95,l=96] run damage @e[family=monster,r=8,rm=1] 130 fall",
+                        "execute at @a[lm=97,l=98] run damage @e[family=monster,r=8,rm=1] 135 fall",
+                        "execute at @a[lm=99,l=100] run damage @e[family=monster,r=8,rm=1] 150 fall",
+                        "execute at @a[lm=101,l=200] run damage @e[family=monster,r=8,rm=1] 200 fall"
+                    ]
+                }
+            },
+			
+            "minecraft:set_hard_mode": {
+                "queue_command": {
+                    "command": [
+                        "gamerule dodaylightcycle false",
+                        "time set midnight"
+                    ]
+                }
+            },
+
+            "minecraft:hell_poison": {
+                "queue_command": {
+                    "command": [
+						"say hell_poison",
+                        "execute at @a run effect @e[r=30] wither 15 2 true",
+                        "execute at @a run effect @s resistance 15 0 true"
+                    ]
+                }
+            },
+			
+            "minecraft:fill_15": {
+                "queue_command": {
+                    "command": [
+						"say fill 15",
+                        "execute at @a run fill ~15 ~15 ~15 ~-15 ~ ~-15 air "
+                    ]
+                }
+            },
+
+        "minecraft:helling": {
+            "queue_command": {
+                "command": [
+                    "say helling",
+                    "execute at @a run effect @s regeneration 30 0 true"
+                ]
+            }
+        },
+			
+			"minecraft:fill_30": {
+                "queue_command": {
+                    "command": [
+						"say fill 30",
+                        "execute at @a run fill ~ ~ ~ ~30 ~15 ~30 air ",
+                        "execute at @a run fill ~ ~ ~ ~-30 ~15 ~30 air ",
+                        "execute at @a run fill ~ ~ ~ ~30 ~15 ~-30 air ",
+                        "execute at @a run fill ~ ~ ~ ~-30 ~15 ~-30 air "
+                    ]
+                }
+            },
+			
+			"minecraft:add_attack_level_1": {"queue_command": {"command": ["event entity @a minecraft:remove_attack_level_all","event entity @a minecraft:add_component_attack_level_1"]}},
+			"minecraft:add_attack_level_2": {"queue_command": {"command": ["event entity @a minecraft:remove_attack_level_all","event entity @a minecraft:add_component_attack_level_2"]}},
+			"minecraft:add_attack_level_3": {"queue_command": {"command": ["event entity @a minecraft:remove_attack_level_all","event entity @a minecraft:add_component_attack_level_3"]}},
+			"minecraft:add_attack_level_4": {"queue_command": {"command": ["event entity @a minecraft:remove_attack_level_all","event entity @a minecraft:add_component_attack_level_4"]}},
+			"minecraft:add_attack_level_5": {"queue_command": {"command": ["event entity @a minecraft:remove_attack_level_all","event entity @a minecraft:add_component_attack_level_5"]}},
+			"minecraft:add_attack_level_6": {"queue_command": {"command": ["event entity @a minecraft:remove_attack_level_all","event entity @a minecraft:add_component_attack_level_6"]}},
+			"minecraft:add_attack_level_7": {"queue_command": {"command": ["event entity @a minecraft:remove_attack_level_all","event entity @a minecraft:add_component_attack_level_7"]}},
+			"minecraft:add_attack_level_8": {"queue_command": {"command": ["event entity @a minecraft:remove_attack_level_all","event entity @a minecraft:add_component_attack_level_8"]}},
+			"minecraft:add_attack_level_9": {"queue_command": {"command": ["event entity @a minecraft:remove_attack_level_all","event entity @a minecraft:add_component_attack_level_9"]}},
+			"minecraft:add_attack_level_10": {"queue_command": {"command": ["event entity @a minecraft:remove_attack_level_all","event entity @a minecraft:add_component_attack_level_10"]}},
+			
+			
+            "minecraft:remove_attack_level_all": {
+                "remove": {
+                    "component_groups": [
+                        "minecraft:attack_level_1",
+                        "minecraft:attack_level_2",
+                        "minecraft:attack_level_3",
+                        "minecraft:attack_level_4",
+                        "minecraft:attack_level_5",
+                        "minecraft:attack_level_6",
+                        "minecraft:attack_level_7",
+                        "minecraft:attack_level_8",
+                        "minecraft:attack_level_9",
+                        "minecraft:attack_level_10"
+                    ]
+                }
+            },
+			
+            "minecraft:add_component_attack_level_1": {"add": {"component_groups": ["minecraft:attack_level_1"]}},
+            "minecraft:add_component_attack_level_2": {"add": {"component_groups": ["minecraft:attack_level_2"]}},
+            "minecraft:add_component_attack_level_3": {"add": {"component_groups": ["minecraft:attack_level_3"]}},
+            "minecraft:add_component_attack_level_4": {"add": {"component_groups": ["minecraft:attack_level_4"]}},
+            "minecraft:add_component_attack_level_5": {"add": {"component_groups": ["minecraft:attack_level_5"]}},
+            "minecraft:add_component_attack_level_6": {"add": {"component_groups": ["minecraft:attack_level_6"]}},
+            "minecraft:add_component_attack_level_7": {"add": {"component_groups": ["minecraft:attack_level_7"]}},
+            "minecraft:add_component_attack_level_8": {"add": {"component_groups": ["minecraft:attack_level_8"]}},
+            "minecraft:add_component_attack_level_9": {"add": {"component_groups": ["minecraft:attack_level_9"]}},
+            "minecraft:add_component_attack_level_10": {"add": {"component_groups": ["minecraft:attack_level_10"]}},
+			
+
+            "minecraft:gain_raid_omen": {
+                "add": {
+                    "component_groups": [
+                        "minecraft:add_raid_omen"
+                    ]
+                }
+            },
+            "minecraft:clear_add_raid_omen": {
+                "remove": {
+                    "component_groups": [
+                        "minecraft:add_raid_omen"
+                    ]
+                },
+                "add": {
+                    "component_groups": [
+                        "minecraft:clear_raid_omen_spell_effect"
+                    ]
+                }
+            },
+            "minecraft:trigger_raid": {
+                "add": {
+                    "component_groups": ["minecraft:raid_trigger"]
+                }
+            },
+            "minecraft:remove_raid_trigger": {
+                "remove": {
+                    "component_groups": ["minecraft:raid_trigger"]
+                }
+            }
+        }
+    }
+}

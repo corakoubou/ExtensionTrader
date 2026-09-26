@@ -1,0 +1,25 @@
+{
+  "format_version": "1.20.10",
+  "minecraft:recipe_shapeless": {
+    "description": {
+      "identifier": "minecraft:golden_helmet_from_nugget"
+    },
+    "tags": [
+      "crafting_table"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:golden_helmet"
+      }
+    ],
+    "unlock": [
+      {
+        "item": "minecraft:golden_helmet"
+      }
+    ],
+    "result": {
+      "item": "minecraft:gold_nugget",
+      "count": 5
+    }
+  }
+}

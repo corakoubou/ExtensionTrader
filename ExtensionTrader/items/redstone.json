@@ -1,0 +1,30 @@
+{
+  "format_version": "1.10",
+  "minecraft:item": {
+    "description": {
+      "identifier": "minecraft:redstone"
+    },
+
+    "components": {
+      "minecraft:use_duration": 16,
+      "minecraft:food": {
+        "nutrition": 0,
+		"can_always_eat": true,
+        "effects": [
+		  {
+            "name": "strength",
+            "chance": 1,
+            "duration": 5,
+            "amplifier": 3
+          },
+		  {
+            "name": "regeneration",
+            "chance": 1,
+            "duration": 5,
+            "amplifier": 0
+          }
+        ]
+      }
+    }
+  }
+}

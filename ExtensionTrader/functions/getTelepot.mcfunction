@@ -1,0 +1,1 @@
+event entity @p minecraft:get_telepot

@@ -1,0 +1,25 @@
+{
+  "format_version": "1.10",
+  "minecraft:item": {
+    "description": {
+      "identifier": "minecraft:cooked_chicken"
+    },
+
+    "components": {
+      "minecraft:use_duration": 32,
+      "minecraft:food": {
+        "nutrition": 6,
+        "saturation_modifier": "normal",
+		"can_always_eat": true,
+		"effects": [
+          {
+            "name": "regeneration",
+            "chance": 1,
+            "duration": 6,
+            "amplifier": 0
+          }
+        ]
+      }
+    }
+  }
+}

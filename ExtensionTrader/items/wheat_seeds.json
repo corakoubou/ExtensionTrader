@@ -1,0 +1,22 @@
+{
+  "format_version": "1.10",
+  "minecraft:item": {
+    "description": {
+      "identifier": "minecraft:wheat_seeds"
+    },
+
+    "components": {
+	  "minecraft:use_duration": 16,
+		  
+      "minecraft:seed": {
+        "crop_result": "wheat" // wheatCrops
+      },
+	  
+      "minecraft:food": {
+        "nutrition": 1,
+        "saturation_modifier": "low",
+		"can_always_eat": true
+      }
+    }
+  }
+}

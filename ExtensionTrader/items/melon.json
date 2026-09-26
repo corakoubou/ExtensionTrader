@@ -1,0 +1,18 @@
+{
+  "format_version": "1.10",
+  "minecraft:item": {
+    "description": {
+      "identifier": "minecraft:melon"
+    },
+
+    "components": {
+      "minecraft:use_duration": 4,
+
+      "minecraft:food": {
+        "nutrition": 2,
+        "saturation_modifier": "low",
+		"can_always_eat": true
+      }
+    }
+  }
+}

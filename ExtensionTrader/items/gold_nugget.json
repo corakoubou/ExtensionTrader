@@ -1,0 +1,36 @@
+{
+  "format_version": "1.10",
+  "minecraft:item": {
+    "description": {
+      "identifier": "minecraft:gold_nugget"
+    },
+
+    "components": {
+      "minecraft:use_duration": 16,
+      "minecraft:food": {
+        "nutrition": 0,
+		"can_always_eat": true,
+        "effects": [
+		  {
+            "name": "absorption",
+            "chance": 1,
+            "duration": 100,
+            "amplifier": 0
+          },
+		  {
+            "name": "strength",
+            "chance": 1,
+            "duration": 12,
+            "amplifier": 0
+          },
+		  {
+            "name": "jump_boost",
+            "chance": 1,
+            "duration":12,
+            "amplifier": 1
+          }
+        ]
+      }
+    }
+  }
+}

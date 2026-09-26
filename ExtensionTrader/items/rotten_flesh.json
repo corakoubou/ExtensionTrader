@@ -1,0 +1,25 @@
+{
+  "format_version": "1.10",
+  "minecraft:item": {
+    "description": {
+      "identifier": "minecraft:rotten_flesh"
+    },
+
+    "components": {
+      "minecraft:use_duration": 4,
+      "minecraft:food": {
+        "nutrition": 4,
+        "saturation_modifier": "low",
+		"can_always_eat": true,
+        "effects": [
+		  {
+            "name": "regeneration",
+            "chance": 1,
+            "duration": 8,
+            "amplifier": 0
+          }
+        ]
+      }
+    }
+  }
+}
