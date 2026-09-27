@@ -715,22 +715,39 @@ world.afterEvents.playerSwingStart.subscribe((event) => {
 
 });
 
-world.afterEvents.entityHitEntity.subscribe((event) => {
-
-    const attacker = event.damagingEntity;
-    const victim = event.hitEntity;
-
-    // プレイヤー以外は無視
-    if (attacker.typeId !== "minecraft:player") return;
-
-    // 攻撃したプレイヤー本人にイベントを実行
-    attacker.runCommand(
-        "execute if score @s strength matches 0.. run scoreboard players add @s strength 2"
-    );
-});
-
 world.afterEvents.entityHurt.subscribe((event) => {
     const player = event.hurtEntity;
+
+    /*
+     * 攻撃を当てた回数ではなく、実際に減らした体力に応じて
+     * 攻撃したプレイヤーの筋力を成長させる。
+     *
+     * Minecraftの体力値1（ハート半分）につき筋力1とし、
+     * 小数部分はスコアへ保存できないため切り捨てる。
+     */
+    const attacker = event.damageSource.damagingEntity;
+
+    if (
+        attacker?.typeId === "minecraft:player" &&
+        attacker.id !== player.id
+    ) {
+        const strengthPoints = Math.floor(event.damage);
+        const identity = attacker.scoreboardIdentity;
+
+        if (strengthPoints > 0 && identity) {
+            const strengthObjective = getOrCreateObjective(
+                "strength",
+                "筋力"
+            );
+            const currentStrength =
+                strengthObjective.getScore(identity) ?? 0;
+
+            strengthObjective.setScore(
+                identity,
+                currentStrength + strengthPoints
+            );
+        }
+    }
 
     // 1ハート（2ダメージ）につき1ポイントを付与し、半端なハートは切り捨てる
     if (player.typeId !== "minecraft:player") return;
