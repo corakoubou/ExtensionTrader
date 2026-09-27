@@ -732,8 +732,11 @@ world.afterEvents.entityHitEntity.subscribe((event) => {
 world.afterEvents.entityHurt.subscribe((event) => {
     const player = event.hurtEntity;
 
-    // ダメージを受けたプレイヤー本人の体力上限スコアを1増やす
+    // 1ハート（2ダメージ）につき1ポイントを付与し、半端なハートは切り捨てる
     if (player.typeId !== "minecraft:player") return;
+
+    const points = Math.floor(event.damage / 2);
+    if (points < 1) return;
 
     let healthMaxObjective = world.scoreboard.getObjective("health_max");
     if (!healthMaxObjective) {
@@ -747,7 +750,7 @@ world.afterEvents.entityHurt.subscribe((event) => {
     if (!identity) return;
 
     const currentScore = healthMaxObjective.getScore(identity) ?? 0;
-    healthMaxObjective.setScore(identity, currentScore + 1);
+    healthMaxObjective.setScore(identity, currentScore + points);
 });
 
 world.afterEvents.playerBreakBlock.subscribe((event) => {
