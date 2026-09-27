@@ -709,7 +709,11 @@ system.runInterval(() => {
             EntityComponentTypes.Exhaustion
         );
 
-        if (!hunger || !saturation || !exhaustion) {
+        const attack = player.getComponent(
+            "minecraft:attack"
+        );
+
+        if (!hunger || !saturation || !exhaustion || !attack) {
             continue;
         }
 
@@ -736,6 +740,7 @@ system.runInterval(() => {
          */
         player.onScreenDisplay.setActionBar(
             `§c筋力: §f${strength}  ` +
+            `§4現在の攻撃力: §f${attack.currentValue.toFixed(0)}  ` +
             `§b採掘能力: §f${mineing}  ` +
             `§a体力上限: §f${healthMax}  ` +
             `§6満腹度: §f${hunger.currentValue.toFixed(0)}  ` +
