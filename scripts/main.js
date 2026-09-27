@@ -724,6 +724,7 @@ world.afterEvents.entityHurt.subscribe((event) => {
      *
      * Minecraftの体力値1（ハート半分）につき筋力1とし、
      * 小数部分はスコアへ保存できないため切り捨てる。
+     * 1回の攻撃で得られる筋力は、ダメージ量にかかわらず最大10とする。
      */
     const attacker = event.damageSource.damagingEntity;
 
@@ -731,7 +732,7 @@ world.afterEvents.entityHurt.subscribe((event) => {
         attacker?.typeId === "minecraft:player" &&
         attacker.id !== player.id
     ) {
-        const strengthPoints = Math.floor(event.damage);
+        const strengthPoints = Math.min(Math.floor(event.damage), 10);
         const identity = attacker.scoreboardIdentity;
 
         if (strengthPoints > 0 && identity) {
