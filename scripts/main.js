@@ -64,6 +64,24 @@ const AXES = new Set([
 ]);
 
 /*
+ * entities/player.json の攻撃力レベルと同じ境界値。
+ * minecraft:attack はコンポーネントグループが付与されるまで取得できないため、
+ * 未付与の間は筋力スコアから表示用の攻撃力を求める。
+ */
+function getAttackDamageFromStrength(strength) {
+    if (strength >= 22001) return 10;
+    if (strength >= 18001) return 9;
+    if (strength >= 14001) return 8;
+    if (strength >= 11001) return 7;
+    if (strength >= 8001) return 6;
+    if (strength >= 5501) return 5;
+    if (strength >= 3501) return 4;
+    if (strength >= 2001) return 3;
+    if (strength >= 1001) return 2;
+    return 1;
+}
+
+/*
  * 一括採掘の対象となる鉱石。
  */
 const ORES = new Set([
@@ -713,7 +731,8 @@ system.runInterval(() => {
             "minecraft:attack"
         );
 
-        if (!hunger || !saturation || !exhaustion || !attack) {
+        // minecraft:attack は動的なコンポーネントなので、未付与でも表示を止めない。
+        if (!hunger || !saturation || !exhaustion) {
             continue;
         }
 
@@ -735,12 +754,15 @@ system.runInterval(() => {
                 player.scoreboardIdentity
             ) ?? 0;
 
+        const attackDamage =
+            attack?.currentValue ?? getAttackDamageFromStrength(strength);
+
         /*
          * アクションバー表示
          */
         player.onScreenDisplay.setActionBar(
             `§c筋力: §f${strength}  ` +
-            `§4現在の攻撃力: §f${attack.currentValue.toFixed(0)}  ` +
+            `§4現在の攻撃力: §f${attackDamage.toFixed(0)}  ` +
             `§b採掘能力: §f${mineing}  ` +
             `§a体力上限: §f${healthMax}  ` +
             `§6満腹度: §f${hunger.currentValue.toFixed(0)}  ` +
