@@ -54,7 +54,7 @@
             }
           },
           "hit_sound": "bow.hit",
-          "power": 5,
+          "power": 1,
           "gravity": 0.05,
           "uncertainty_base": 1,
           "uncertainty_multiplier": 0,
@@ -80,7 +80,7 @@
             }
           },
           "hit_sound": "bow.hit",
-          "power": 10.6,
+          "power": 1.6,
           "gravity": 0.05,
           "uncertainty_base": 16,
           "uncertainty_multiplier": 4,
@@ -123,7 +123,7 @@
           }
         },
         "hit_sound": "bow.hit",
-        "power": 10.6,
+        "power": 1.6,
         "gravity": 0.05,
         "uncertainty_base": 16,
         "uncertainty_multiplier": 4,
