@@ -4,7 +4,8 @@ import {
     EquipmentSlot,
     EntityComponentTypes,
 	EntitySwingSource,
-    ItemComponentTypes
+    ItemComponentTypes,
+    EnchantmentTypes
 } from "@minecraft/server";
 
 /*
@@ -62,6 +63,61 @@ const AXES = new Set([
     "minecraft:diamond_axe",
     "minecraft:netherite_axe"
 ]);
+
+/*
+ * 採掘能力を個別に成長させる対象ツール。
+ */
+const HOES = new Set([
+    "minecraft:wooden_hoe",
+    "minecraft:stone_hoe",
+    "minecraft:copper_hoe",
+    "minecraft:iron_hoe",
+    "minecraft:golden_hoe",
+    "minecraft:diamond_hoe",
+    "minecraft:netherite_hoe"
+]);
+
+const SHOVELS = new Set([
+    "minecraft:wooden_shovel",
+    "minecraft:stone_shovel",
+    "minecraft:copper_shovel",
+    "minecraft:iron_shovel",
+    "minecraft:golden_shovel",
+    "minecraft:diamond_shovel",
+    "minecraft:netherite_shovel"
+]);
+
+const MINING_TOOL_STATS = [
+    {
+        items: PICKAXES,
+        objective: "p_mineing",
+        displayName: "つるはし採掘能力値",
+        tagPrefix: "p_eff"
+    },
+    {
+        items: HOES,
+        objective: "h_mineing",
+        displayName: "くわ採掘能力値",
+        tagPrefix: "h_eff"
+    },
+    {
+        items: AXES,
+        objective: "a_mineing",
+        displayName: "おの採掘能力値",
+        tagPrefix: "a_eff"
+    },
+    {
+        items: SHOVELS,
+        objective: "s_mineing",
+        displayName: "シャベル採掘能力値",
+        tagPrefix: "s_eff"
+    }
+];
+
+function getOrCreateObjective(id, displayName) {
+    return world.scoreboard.getObjective(id) ??
+        world.scoreboard.addObjective(id, displayName);
+}
 
 /*
  * entities/player.json の攻撃力レベルと同じ境界値。
@@ -696,10 +752,80 @@ world.afterEvents.entityHurt.subscribe((event) => {
 
 world.afterEvents.playerBreakBlock.subscribe((event) => {
     const player = event.player;
-    const block = event.brokenBlockPermutation;
-	    // 左クリックした本人にイベントを実行
-    player.runCommand("execute if score @s strength matches 0.. run scoreboard players add @s mineing 1");
+    const usedTool = event.itemStackBeforeBreak;
+
+    if (!usedTool) return;
+
+    const toolStat = MINING_TOOL_STATS.find(({ items }) =>
+        items.has(usedTool.typeId)
+    );
+
+    if (!toolStat) return;
+
+    const objective = getOrCreateObjective(
+        toolStat.objective,
+        toolStat.displayName
+    );
+    const identity = player.scoreboardIdentity;
+
+    if (!objective || !identity) return;
+
+    const currentScore = objective.getScore(identity) ?? 0;
+    objective.setScore(identity, currentScore + 1);
 });
+
+/*
+ * 各ツール用の効率強化タグから、手に持っている対応ツールへ
+ * 付与すべき効率強化レベルを求める。
+ */
+function getEfficiencyLevel(player, tagPrefix) {
+    for (let index = 4; index >= 0; index--) {
+        if (player.hasTag(`${tagPrefix}${index}`)) {
+            return index + 1;
+        }
+    }
+
+    return 0;
+}
+
+function applyToolEfficiency(player) {
+    const equippable = player.getComponent(
+        EntityComponentTypes.Equippable
+    );
+
+    if (!equippable) return;
+
+    const tool = equippable.getEquipment(EquipmentSlot.Mainhand);
+
+    if (!tool) return;
+
+    const toolStat = MINING_TOOL_STATS.find(({ items }) =>
+        items.has(tool.typeId)
+    );
+
+    if (!toolStat) return;
+
+    const level = getEfficiencyLevel(player, toolStat.tagPrefix);
+
+    if (level === 0) return;
+
+    const enchantable = tool.getComponent(ItemComponentTypes.Enchantable);
+    const efficiencyType = EnchantmentTypes.get("efficiency");
+
+    if (!enchantable || !efficiencyType) return;
+
+    const currentLevel =
+        enchantable.getEnchantment(efficiencyType)?.level ?? 0;
+
+    if (currentLevel >= level) return;
+
+    enchantable.addEnchantment({
+        type: efficiencyType,
+        level
+    });
+
+    equippable.setEquipment(EquipmentSlot.Mainhand, tool);
+}
 
 system.runInterval(() => {
     const scoreboard = world.scoreboard;
@@ -707,8 +833,22 @@ system.runInterval(() => {
     const strengthObjective =
         scoreboard.getObjective("strength");
 
-    const mineingObjective =
-        scoreboard.getObjective("mineing");
+    const pickaxeMiningObjective = getOrCreateObjective(
+        "p_mineing",
+        "つるはし採掘能力値"
+    );
+    const hoeMiningObjective = getOrCreateObjective(
+        "h_mineing",
+        "くわ採掘能力値"
+    );
+    const axeMiningObjective = getOrCreateObjective(
+        "a_mineing",
+        "おの採掘能力値"
+    );
+    const shovelMiningObjective = getOrCreateObjective(
+        "s_mineing",
+        "シャベル採掘能力値"
+    );
 
     const healthMaxObjective =
         scoreboard.getObjective("health_max");
@@ -744,10 +884,14 @@ system.runInterval(() => {
                 player.scoreboardIdentity
             ) ?? 0;
 
-        const mineing =
-            mineingObjective?.getScore(
-                player.scoreboardIdentity
-            ) ?? 0;
+        const pickaxeMining =
+            pickaxeMiningObjective?.getScore(player.scoreboardIdentity) ?? 0;
+        const hoeMining =
+            hoeMiningObjective?.getScore(player.scoreboardIdentity) ?? 0;
+        const axeMining =
+            axeMiningObjective?.getScore(player.scoreboardIdentity) ?? 0;
+        const shovelMining =
+            shovelMiningObjective?.getScore(player.scoreboardIdentity) ?? 0;
 
         const healthMax =
             healthMaxObjective?.getScore(
@@ -760,10 +904,13 @@ system.runInterval(() => {
         /*
          * アクションバー表示
          */
+        applyToolEfficiency(player);
+
         player.onScreenDisplay.setActionBar(
             `§c筋力: §f${strength}  ` +
             `§4現在の攻撃力: §f${attackDamage.toFixed(0)}  ` +
-            `§b採掘能力: §f${mineing}  ` +
+            `§b採掘能力: §fP:${pickaxeMining} H:${hoeMining} ` +
+            `A:${axeMining} S:${shovelMining}  ` +
             `§a体力上限: §f${healthMax}  ` +
             `§6満腹度: §f${hunger.currentValue.toFixed(0)}  ` +
             `§e隠し満腹度: §f${saturation.currentValue.toFixed(1)}  `
