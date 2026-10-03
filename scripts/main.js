@@ -18,9 +18,9 @@ const MAX_TOTAL_BREAK_COUNT = 32;
 
 /*
  * 高い木でも一括伐採できるように、
- * 斧による一括破壊の探索距離（最大破壊数）は他ツールの3倍にする。
+ * 斧による一括破壊の探索距離（最大破壊数）は他ツールの6倍にする。
  */
-const AXE_BREAK_RANGE_MULTIPLIER = 3;
+const AXE_BREAK_RANGE_MULTIPLIER = 6;
 
 /*
  * 隣接判定に使う26方向。
@@ -351,8 +351,8 @@ function veinMine(
     /*
      * 最初の1個はプレイヤーがすでに壊している。
      *
-     * 斧で伐採する原木は、他ツールの3倍まで探索・破壊する。
-     * 通常は合計32個（追加31個）、原木は合計96個（追加95個）。
+     * 斧で伐採する原木は、他ツールの6倍まで探索・破壊する。
+     * 通常は合計32個（追加31個）、原木は合計192個（追加191個）。
      */
     const maxTotalBreakCount = isLog(brokenTypeId)
         ? MAX_TOTAL_BREAK_COUNT * AXE_BREAK_RANGE_MULTIPLIER
