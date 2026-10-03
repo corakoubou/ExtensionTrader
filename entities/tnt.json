@@ -8,20 +8,6 @@
       "is_experimental": false
     },
 
-    "component_groups": {
-      "from_explosion": {
-        "minecraft:explode": {
-          "fuse_length": {
-            "range_min": 2,
-            "range_max": 6
-          },
-          "fuse_lit": true,
-          "power": 12,
-          "causes_fire": false
-        }
-      }
-    },
-	
     "components": {
       "minecraft:type_family": {
         "family": [ "tnt", "inanimate" ]
@@ -30,14 +16,7 @@
         "width": 0.98,
         "height": 0.98
       },
-
-      "minecraft:explode": {
-        "fuse_length": 4,
-        "fuse_lit": true,
-        "power": 12,
-        "causes_fire": false
-      },
-	    "minecraft:physics": {
+      "minecraft:physics": {
       },
       "minecraft:pushable": {
         "is_pushable": false,
@@ -51,15 +30,8 @@
         }
       }
     },
-    
     "events": {
-      "from_explosion": {
-        "add": {
-          "component_groups": [
-            "from_explosion"
-          ]
-        }
-      }
+      "from_explosion": {}
     }
   }
 }
