@@ -381,6 +381,10 @@
 						"execute at @a run effect @s[tag=has0,tag=has1,tag=has2,tag=has3,tag=has4] haste 60 4 true",
 						"execute at @a run effect @s[tag=has0,tag=has1,tag=has2,tag=has3,tag=has4,tag=has5] haste 60 5 true",
 						"execute at @a run effect @s[tag=has0,tag=has1,tag=has2,tag=has3,tag=has4,tag=has5,tag=has6] haste 60 6 true",
+
+						"effect @s[lm=10,l=19] haste 60 0 true",
+						"effect @s[lm=20,l=34] haste 60 1 true",
+						"effect @s[lm=35] haste 60 3 true",
 						
 						"execute at @a run effect @s[tag=her0] village_hero 60 0 true",
 						"execute at @a run effect @s[tag=her0,tag=her1] village_hero 60 1 true",
