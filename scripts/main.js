@@ -23,6 +23,12 @@ const MAX_TOTAL_BREAK_COUNT = 32;
 const AXE_BREAK_RANGE_MULTIPLIER = 6;
 
 /*
+ * 1回の被ダメージで獲得できる体力上限ポイント。
+ * プレイヤーの現在体力を大幅に超えるダメージでも、この値を上限とする。
+ */
+const MAX_HEALTH_POINTS_PER_HIT = 20;
+
+/*
  * 隣接判定に使う26方向。
  *
  * 3×3×3の中心以外をすべて登録するため、
@@ -758,10 +764,16 @@ world.afterEvents.entityHurt.subscribe((event) => {
         }
     }
 
-    // 1ハート（2ダメージ）につき1ポイントを付与し、半端なハートは切り捨てる
+    /*
+     * 1ハート（2ダメージ）につき1ポイントを付与し、半端なハートは切り捨てる。
+     * 過剰なダメージを受けた場合も、1回につき最大20ポイントとする。
+     */
     if (player.typeId !== "minecraft:player") return;
 
-    const points = Math.floor(event.damage / 2);
+    const points = Math.min(
+        Math.floor(event.damage / 2),
+        MAX_HEALTH_POINTS_PER_HIT
+    );
     if (points < 1) return;
 
     let healthMaxObjective = world.scoreboard.getObjective("health_max");
