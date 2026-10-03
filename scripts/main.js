@@ -330,10 +330,8 @@ function breakTntTargets(dimension, targets, startIndex) {
         try {
             const { x, y, z } = target.location;
 
-            // destroy指定により、ブロックをアイテムとしてドロップさせる。
-            dimension.runCommand(
-                `setblock ${x} ${y} ${z} air destroy`
-            );
+            // 空気へ直接置き換え、破壊したブロックをドロップさせない。
+            dimension.runCommand(`setblock ${x} ${y} ${z} air`);
         } catch (error) {
             console.warn(
                 `TNTのブロック破壊に失敗しました: ${error}`
