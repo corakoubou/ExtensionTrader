@@ -187,6 +187,167 @@ const ORES = new Set([
 ]);
 
 /*
+ * TNTで破壊しない鉱石。
+ *
+ * ORESには一括採掘の都合で丸石も含まれているため、
+ * TNT用には実際の鉱石だけを別に定義する。
+ */
+const TNT_PROTECTED_ORES = new Set([
+    "minecraft:coal_ore",
+    "minecraft:deepslate_coal_ore",
+    "minecraft:iron_ore",
+    "minecraft:deepslate_iron_ore",
+    "minecraft:copper_ore",
+    "minecraft:deepslate_copper_ore",
+    "minecraft:gold_ore",
+    "minecraft:deepslate_gold_ore",
+    "minecraft:nether_gold_ore",
+    "minecraft:redstone_ore",
+    "minecraft:lit_redstone_ore",
+    "minecraft:deepslate_redstone_ore",
+    "minecraft:lit_deepslate_redstone_ore",
+    "minecraft:lapis_ore",
+    "minecraft:deepslate_lapis_ore",
+    "minecraft:diamond_ore",
+    "minecraft:deepslate_diamond_ore",
+    "minecraft:emerald_ore",
+    "minecraft:deepslate_emerald_ore",
+    "minecraft:nether_quartz_ore",
+    "minecraft:ancient_debris"
+]);
+
+const TNT_FUSE_TICKS = 80;
+const TNT_BREAK_SIZE = 10;
+const TNT_BREAKS_PER_TICK = 100;
+
+/*
+ * バニラの爆発はentities/tnt.jsonから削除し、点火されたTNTを
+ * 4秒後にスクリプトで処理する。エンティティへの爆発ダメージや
+ * 炎は発生させず、中心を含む10×10×10だけを対象にする。
+ */
+world.afterEvents.entitySpawn.subscribe((event) => {
+    if (event.entity.typeId !== "minecraft:tnt") {
+        return;
+    }
+
+    const tnt = event.entity;
+
+    system.runTimeout(() => {
+        if (!tnt.isValid) {
+            return;
+        }
+
+        const dimension = tnt.dimension;
+        const center = {
+            x: Math.floor(tnt.location.x),
+            y: Math.floor(tnt.location.y),
+            z: Math.floor(tnt.location.z)
+        };
+
+        try {
+            dimension.playSound("random.explode", tnt.location);
+            dimension.spawnParticle(
+                "minecraft:huge_explosion_emitter",
+                tnt.location
+            );
+        } catch {
+            // 演出に失敗してもブロック破壊は続行する。
+        }
+
+        tnt.remove();
+        breakTntCube(dimension, center);
+    }, TNT_FUSE_TICKS);
+});
+
+/*
+ * TNTの中心から各軸-5～+4の立方体を調べる。
+ * 1000個を一度に処理してウォッチドッグを作動させないよう、
+ * 破壊処理は複数tickに分割する。
+ */
+function breakTntCube(dimension, center) {
+    const targets = [];
+    const minOffset = -Math.floor(TNT_BREAK_SIZE / 2);
+    const maxOffset = minOffset + TNT_BREAK_SIZE;
+
+    for (let x = minOffset; x < maxOffset; x++) {
+        for (let y = minOffset; y < maxOffset; y++) {
+            for (let z = minOffset; z < maxOffset; z++) {
+                const location = {
+                    x: center.x + x,
+                    y: center.y + y,
+                    z: center.z + z
+                };
+
+                let block;
+
+                try {
+                    block = dimension.getBlock(location);
+                } catch {
+                    continue;
+                }
+
+                if (
+                    !block ||
+                    block.typeId === "minecraft:air" ||
+                    TNT_PROTECTED_ORES.has(block.typeId)
+                ) {
+                    continue;
+                }
+
+                targets.push({
+                    location,
+                    typeId: block.typeId
+                });
+            }
+        }
+    }
+
+    breakTntTargets(dimension, targets, 0);
+}
+
+function breakTntTargets(dimension, targets, startIndex) {
+    const endIndex = Math.min(
+        startIndex + TNT_BREAKS_PER_TICK,
+        targets.length
+    );
+
+    for (let index = startIndex; index < endIndex; index++) {
+        const target = targets[index];
+        let block;
+
+        try {
+            block = dimension.getBlock(target.location);
+        } catch {
+            continue;
+        }
+
+        // 待機中に置き換わったブロックは壊さない。
+        if (!block || block.typeId !== target.typeId) {
+            continue;
+        }
+
+        try {
+            const { x, y, z } = target.location;
+
+            // destroy指定により、ブロックをアイテムとしてドロップさせる。
+            dimension.runCommand(
+                `setblock ${x} ${y} ${z} air destroy`
+            );
+        } catch (error) {
+            console.warn(
+                `TNTのブロック破壊に失敗しました: ${error}`
+            );
+        }
+    }
+
+    if (endIndex < targets.length) {
+        system.run(() => {
+            breakTntTargets(dimension, targets, endIndex);
+        });
+    }
+}
+
+/*
  * 一括伐採の対象となる原木・幹。
  *
  * stripped系も対象にしたい場合は、
