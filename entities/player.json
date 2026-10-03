@@ -384,7 +384,7 @@
 
 						"effect @s[lm=10,l=19] haste 60 0 true",
 						"effect @s[lm=20,l=34] haste 60 1 true",
-						"effect @s[lm=35] haste 60 3 true",
+						"effect @s[lm=35] haste 60 2 true",
 						
 						"execute at @a run effect @s[tag=her0] village_hero 60 0 true",
 						"execute at @a run effect @s[tag=her0,tag=her1] village_hero 60 1 true",
