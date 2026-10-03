@@ -8,18 +8,6 @@
       "is_experimental": false
     },
 
-    "component_groups": {
-      "minecraft:exploding": {
-        "minecraft:explode": {
-          "fuse_length": 0,
-          "fuse_lit": true,
-          "power": 1,
-          "causes_fire": false,
-          "destroy_affected_by_griefing": true
-        }
-      }
-    },
-
     "components": {
       "minecraft:collision_box": {
         "width": 0.25,
@@ -34,29 +22,14 @@
             "knockback": true,
             "semi_random_diff_damage": false
           },
-          "definition_event": {
-            "affect_projectile": true,
-            "event_trigger": {
-              "event": "minecraft:explode",
-              "target": "self"
-            }
-          }
+          "teleport_owner": {},
+          "remove_on_hit": {}
         },
         "power": 3.0,
         "gravity": 0.03,
         "angle_offset": 0.0,
         "hit_sound": "random.bowhit",
         "shoot_target": false
-      }
-    },
-
-    "events": {
-      "minecraft:explode": {
-        "add": {
-          "component_groups": [
-            "minecraft:exploding"
-          ]
-        }
       }
     }
   }
