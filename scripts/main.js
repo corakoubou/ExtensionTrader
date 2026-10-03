@@ -218,13 +218,13 @@ const TNT_PROTECTED_ORES = new Set([
 ]);
 
 const TNT_FUSE_TICKS = 80;
-const TNT_BREAK_SIZE = 10;
+const TNT_BREAK_SIZE = 8;
 const TNT_BREAKS_PER_TICK = 100;
 
 /*
  * バニラの爆発はentities/tnt.jsonから削除し、点火されたTNTを
  * 4秒後にスクリプトで処理する。エンティティへの爆発ダメージや
- * 炎は発生させず、中心を含む10×10×10だけを対象にする。
+ * 炎は発生させず、中心を含む8×8×8だけを対象にする。
  */
 world.afterEvents.entitySpawn.subscribe((event) => {
     if (event.entity.typeId !== "minecraft:tnt") {
@@ -261,8 +261,8 @@ world.afterEvents.entitySpawn.subscribe((event) => {
 });
 
 /*
- * TNTの中心から各軸-5～+4の立方体を調べる。
- * 1000個を一度に処理してウォッチドッグを作動させないよう、
+ * TNTの中心から各軸-4～+3の立方体を調べる。
+ * 512個を一度に処理してウォッチドッグを作動させないよう、
  * 破壊処理は複数tickに分割する。
  */
 function breakTntCube(dimension, center) {
