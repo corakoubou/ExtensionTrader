@@ -1,0 +1,22 @@
+{
+  "format_version": "1.20.10",
+  "minecraft:recipe_shapeless": {
+    "description": {
+      "identifier": "extensiontrader:recycle_diamond_horse_armor"
+    },
+    "tags": ["crafting_table"],
+    "ingredients": [
+      {
+        "item": "minecraft:horsearmordiamond"
+      }
+    ],
+    "unlock": [
+      {
+        "item": "minecraft:horsearmordiamond"
+      }
+    ],
+    "result": {
+      "item": "minecraft:diamond"
+    }
+  }
+}
