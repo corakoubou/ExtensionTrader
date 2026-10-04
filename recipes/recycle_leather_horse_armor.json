@@ -1,0 +1,23 @@
+{
+  "format_version": "1.20.10",
+  "minecraft:recipe_shapeless": {
+    "description": {
+      "identifier": "extensiontrader:recycle_leather_horse_armor"
+    },
+    "tags": ["crafting_table"],
+    "ingredients": [
+      {
+        "item": "minecraft:horsearmorleather"
+      }
+    ],
+    "unlock": [
+      {
+        "item": "minecraft:horsearmorleather"
+      }
+    ],
+    "result": {
+      "item": "minecraft:leather",
+      "count": 6
+    }
+  }
+}

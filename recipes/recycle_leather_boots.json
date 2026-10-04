@@ -1,0 +1,23 @@
+{
+  "format_version": "1.20.10",
+  "minecraft:recipe_shapeless": {
+    "description": {
+      "identifier": "extensiontrader:recycle_leather_boots"
+    },
+    "tags": ["crafting_table"],
+    "ingredients": [
+      {
+        "item": "minecraft:leather_boots"
+      }
+    ],
+    "unlock": [
+      {
+        "item": "minecraft:leather_boots"
+      }
+    ],
+    "result": {
+      "item": "minecraft:leather",
+      "count": 3
+    }
+  }
+}
