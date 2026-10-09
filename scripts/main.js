@@ -693,6 +693,11 @@ function veinMine(
              * 通常破壊コマンドではなく空気へ直接変更する。
              */
             block.setType("minecraft:air");
+            additionalBrokenCount++;
+
+            // 直接空気に変更したブロックは採掘イベントが発生しない。
+            // 実際に破壊できた1個分を、使用した道具のポイントへ加算する。
+            addMiningPoint(player, tool);
 
             /*
              * LootTableManagerで生成したドロップを出現させる。
@@ -710,8 +715,6 @@ function veinMine(
 
             continue;
         }
-
-        additionalBrokenCount++;
 
         /*
          * 追加で壊した1ブロック分だけ道具を消耗させる。
@@ -952,9 +955,13 @@ world.afterEvents.entityHurt.subscribe((event) => {
 });
 
 world.afterEvents.playerBreakBlock.subscribe((event) => {
-    const player = event.player;
-    const usedTool = event.itemStackBeforeBreak;
+    addMiningPoint(event.player, event.itemStackBeforeBreak);
+});
 
+/*
+ * 通常採掘・一括採掘共通で、破壊した1ブロック分のポイントを加算する。
+ */
+function addMiningPoint(player, usedTool) {
     if (!usedTool) return;
 
     const toolStat = MINING_TOOL_STATS.find(({ items }) =>
@@ -973,7 +980,7 @@ world.afterEvents.playerBreakBlock.subscribe((event) => {
 
     const currentScore = objective.getScore(identity) ?? 0;
     objective.setScore(identity, currentScore + 1);
-});
+}
 
 /*
  * 各ツール用の効率強化タグから、手に持っている対応ツールへ
