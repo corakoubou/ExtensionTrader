@@ -21,7 +21,7 @@
             "name": "instant_health",
             "chance": 1,
             "duration": 0.05,
-            "amplifier": 0
+            "amplifier": 2
           }
         ]
       }
