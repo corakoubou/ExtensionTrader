@@ -1125,3 +1125,30 @@ system.runInterval(() => {
         );
     }
 }, 5);
+
+
+// 紐（トリップワイヤー）に触れているMobに鈍足Iを付与する。
+// 離れた後は1秒で切れるよう、5ティックごとに更新する。
+system.runInterval(() => {
+    for (const dimensionId of ["overworld", "nether", "the_end"]) {
+        const dimension = world.getDimension(dimensionId);
+        for (const entity of dimension.getEntities()) {
+            try {
+                if (entity.typeId === "minecraft:player" ||
+                    !entity.getComponent(EntityComponentTypes.Health)) continue;
+
+                const location = entity.location;
+                const block = dimension.getBlock({
+                    x: Math.floor(location.x),
+                    y: Math.floor(location.y),
+                    z: Math.floor(location.z)
+                });
+                if (block?.typeId === "minecraft:tripwire") {
+                    entity.addEffect("slowness", 20, { amplifier: 0 });
+                }
+            } catch {
+                // デスポーンや未ロードのチャンクは次回の判定に任せる。
+            }
+        }
+    }
+}, 5);

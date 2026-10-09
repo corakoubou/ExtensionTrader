@@ -1,0 +1,25 @@
+{
+  "format_version": "1.20.10",
+  "minecraft:recipe_shapeless": {
+    "description": {
+      "identifier": "extensiontrader:black_wool_to_string"
+    },
+    "tags": [
+      "crafting_table"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:black_wool"
+      }
+    ],
+    "unlock": [
+      {
+        "item": "minecraft:black_wool"
+      }
+    ],
+    "result": {
+      "item": "minecraft:string",
+      "count": 9
+    }
+  }
+}
