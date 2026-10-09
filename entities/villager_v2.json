@@ -1453,7 +1453,7 @@
           "value": 0.5
         },
         "minecraft:ageable": {
-          "duration": 1200,
+          "duration": 12,
           "grow_up": {
             "event": "minecraft:ageable_grow_up",
             "target": "self"
