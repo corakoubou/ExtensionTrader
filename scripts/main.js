@@ -1152,3 +1152,50 @@ system.runInterval(() => {
         }
     }
 }, 5);
+
+
+// 15ブロック以内の鉱物ドロップを最も近いプレイヤーへ移動する。
+const MAGNET_ITEM_TYPES = new Set([
+    "minecraft:coal",
+    "minecraft:raw_iron",
+    "minecraft:raw_copper",
+    "minecraft:raw_gold",
+    "minecraft:diamond"
+]);
+const MAGNET_RADIUS = 15;
+
+system.runInterval(() => {
+    const candidates = new Map();
+    for (const player of world.getAllPlayers()) {
+        const location = player.location;
+        for (const item of player.dimension.getEntities({
+            type: "minecraft:item",
+            location,
+            maxDistance: MAGNET_RADIUS
+        })) {
+            try {
+                const stack = item.getComponent(EntityComponentTypes.Item)?.itemStack;
+                if (!stack || !MAGNET_ITEM_TYPES.has(stack.typeId)) continue;
+
+                const itemLocation = item.location;
+                const distanceSquared =
+                    (itemLocation.x - location.x) ** 2 +
+                    (itemLocation.y - location.y) ** 2 +
+                    (itemLocation.z - location.z) ** 2;
+                const current = candidates.get(item.id);
+                if (!current || distanceSquared < current.distanceSquared) {
+                    candidates.set(item.id, { item, player, distanceSquared });
+                }
+            } catch {
+                // 回収済み・消滅済みのドロップは処理しない。
+            }
+        }
+    }
+    for (const { item, player } of candidates.values()) {
+        try {
+            item.teleport(player.location, { dimension: player.dimension });
+        } catch {
+            // 判定後に回収・消滅した場合は次回の判定に任せる。
+        }
+    }
+}, 5);
