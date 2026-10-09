@@ -21,7 +21,7 @@
             "name": "resistance",
             "chance": 1,
             "duration": 90,
-            "amplifier": 2
+            "amplifier": 1
           }
         ]
       }
