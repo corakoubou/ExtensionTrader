@@ -4,7 +4,7 @@
 
 通常のボートアイテムを設置すると高速ボートへ自動変換します。設置済みのボートもチャンク読み込み後、最大5秒程度で変換します。乗客がいるボートは降船してから変換します。チェスト付きボートの27スロットは変換時に引き継ぎます。
 
-操縦は乗り物用の移動コンポーネントによる操作です。標準ボートのオール式操縦とは異なります。水上速度の設定値は `minecraft:underwater_movement.value: 1.2`、地上は `minecraft:movement.value: 0.15` です。標準ボートとの実際の速度比は未測定です。
+操縦は乗り物用の移動コンポーネントによる操作です。標準ボートのオール式操縦とは異なります。水上速度の設定値は `minecraft:underwater_movement.value: 0.6`、地上は `minecraft:movement.value: 0.075` です。標準ボートとの実際の速度比は未測定です。
 
 `/summon extensiontrader:fast_boat` または `/summon extensiontrader:fast_chest_boat` でも設置できます。10種類の木材の色を引き継ぎます。モデルは専用の簡易ボートモデルです。
 

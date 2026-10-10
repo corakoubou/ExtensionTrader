@@ -79,10 +79,10 @@
         "is_pushable_by_piston": true
       },
       "minecraft:movement": {
-        "value": 0.15
+        "value": 0.075
       },
       "minecraft:underwater_movement": {
-        "value": 1.2
+        "value": 0.6
       },
       "minecraft:movement.basic": {},
       "minecraft:input_ground_controlled": {},
