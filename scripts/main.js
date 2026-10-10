@@ -1426,5 +1426,12 @@ world.afterEvents.playerSpawn.subscribe((event) => {
         } catch (error) {
             console.warn(`村の検索コマンドを実行できませんでした: ${error}`);
         }
+        // runCommandの結果はチャットに出ないため、登録済み座標を明示的に通知する。
+        // /locateの戻り値から座標を取得できるわけではない。
+        try {
+            sendRegisteredVillage(event.player);
+        } catch {
+            // 通知前にログアウトした場合は次回参加時に表示する。
+        }
     });
 });
