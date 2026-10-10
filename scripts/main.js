@@ -1353,3 +1353,65 @@ world.afterEvents.playerSwingStart.subscribe((event) => {
         }
     });
 });
+
+
+// 水上で漕いでいるボートへ追加加速する（通常約0.4 → 約1.2ブロック/tick）。
+const BOAT_SPEED_MULTIPLIER = 3;
+const BOAT_BASE_WATER_SPEED = 0.4;
+const BOAT_EXTRA_ACCELERATION = 0.04 * (BOAT_SPEED_MULTIPLIER - 1);
+
+system.runInterval(() => {
+    const processed = new Set();
+    for (const player of world.getAllPlayers()) {
+        try {
+            const boat = player.getComponent(EntityComponentTypes.Riding)?.entityRidingOn;
+            if (!boat || !["minecraft:boat", "minecraft:chest_boat"].includes(boat.typeId)) continue;
+            if (processed.has(boat.id)) continue;
+            // 操縦席以外のプレイヤーからは加速しない。
+            const riders = boat.getComponent(EntityComponentTypes.Rideable)?.getRiders();
+            if (riders?.[0]?.id !== player.id) continue;
+            processed.add(boat.id);
+
+            const position = boat.location;
+            const water = boat.dimension.getBlock({
+                x: Math.floor(position.x),
+                y: Math.floor(position.y - 0.1),
+                z: Math.floor(position.z)
+            });
+            if (!water || !["minecraft:water", "minecraft:flowing_water"].includes(water.typeId)) continue;
+
+            const input = player.inputInfo.getMovementVector();
+            // 前後の漕ぎ操作だけを増幅し、旋回だけでは追加推進しない。
+            if (Math.abs(input.y) < 0.01) continue;
+            const forward = boat.getViewDirection();
+            const length = Math.hypot(forward.x, forward.z);
+            if (length < 0.01) continue;
+            const direction = {
+                x: forward.x / length * Math.sign(input.y),
+                z: forward.z / length * Math.sign(input.y)
+            };
+            const velocity = boat.getVelocity();
+            const speed = Math.hypot(velocity.x, velocity.z);
+            const maxSpeed = BOAT_BASE_WATER_SPEED * BOAT_SPEED_MULTIPLIER;
+            if (speed >= maxSpeed) continue;
+            // 追加加速後の水平速度が上限を超えない量だけ加える。
+            const projection = velocity.x * direction.x + velocity.z * direction.z;
+            const headroom = -projection + Math.sqrt(
+                Math.max(0, projection * projection + maxSpeed * maxSpeed - speed * speed)
+            );
+            const acceleration = Math.min(
+                BOAT_EXTRA_ACCELERATION * Math.min(1, Math.abs(input.y)),
+                headroom
+            );
+            if (acceleration > 0) {
+                boat.applyImpulse({
+                    x: direction.x * acceleration,
+                    y: 0,
+                    z: direction.z * acceleration
+                });
+            }
+        } catch {
+            // 降船・破壊・未ロードのチャンクは次回の判定に任せる。
+        }
+    }
+}, 1);
