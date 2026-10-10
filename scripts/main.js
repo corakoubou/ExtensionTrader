@@ -1141,12 +1141,15 @@ system.runInterval(() => {
          * アクションバー表示
          */
         applyToolEfficiency(player);
+        applySpearLungeEnchantment(player);
+        const spearPoints = getSpearPoints(player);
+        const spearLevel = getSpearLevel(spearPoints);
 
         player.onScreenDisplay.setActionBar(
             `§c筋力: §f${strength}  ` +
             `§4現在の攻撃力: §f${attackDamage.toFixed(0)}  ` +
             `§b採掘能力: §fP:${pickaxeMining} H:${hoeMining} ` +
-            `A:${axeMining} S:${shovelMining}  ` +
+            `A:${axeMining} S:${shovelMining} 槍:${spearPoints}(Lv${spearLevel})  ` +
             `§a体力上限: §f${healthMax}  ` +
             `§6満腹度: §f${hunger.currentValue.toFixed(0)}  ` +
             `§e隠し満腹度: §f${saturation.currentValue.toFixed(1)}  `
@@ -1229,14 +1232,54 @@ system.runInterval(() => {
 }, 5);
 
 
-// Lungeによる前方加速に、その約2倍を追加して合計約3倍にする。
-const SPEAR_LUNGE_SPEED_MULTIPLIER = 3;
+// 槍の成長レベルに応じてLungeの前方加速を追加する。
 const SPEAR_TYPES = new Set([
     "minecraft:wooden_spear", "minecraft:stone_spear",
     "minecraft:copper_spear", "minecraft:iron_spear",
     "minecraft:golden_spear", "minecraft:diamond_spear",
     "minecraft:netherite_spear"
 ]);
+// 槍は突進1回につき1ポイント。レベル10までは体力増強と同じ境界値。
+const SPEAR_LEVEL_THRESHOLDS = [
+    101, 201, 351, 551, 801, 1101, 1401, 1801, 2401,
+    3001, 3601, 4201
+];
+
+function getSpearPoints(player) {
+    const identity = player.scoreboardIdentity;
+    if (!identity) return 0;
+    return getOrCreateObjective("sp_mineing", "槍採掘能力値").getScore(identity) ?? 0;
+}
+
+function getSpearLevel(points) {
+    return 1 + SPEAR_LEVEL_THRESHOLDS.filter(threshold => points >= threshold).length;
+}
+
+function getSpearExtraSpeedMultiplier(points) {
+    return Math.min(10, Math.max(0, getSpearLevel(points) - 3));
+}
+
+function addSpearLungePoint(player) {
+    const identity = player.scoreboardIdentity;
+    if (!identity) return;
+    const objective = getOrCreateObjective("sp_mineing", "槍採掘能力値");
+    objective.setScore(identity, (objective.getScore(identity) ?? 0) + 1);
+}
+
+function applySpearLungeEnchantment(player) {
+    const equippable = player.getComponent(EntityComponentTypes.Equippable);
+    const tool = equippable?.getEquipment(EquipmentSlot.Mainhand);
+    if (!tool || !SPEAR_TYPES.has(tool.typeId)) return;
+    const enchantable = tool.getComponent(ItemComponentTypes.Enchantable);
+    const type = EnchantmentTypes.get("lunge");
+    if (!enchantable || !type) return;
+    const level = Math.min(3, getSpearLevel(getSpearPoints(player)));
+    if (enchantable.getEnchantment(type)?.level === level) return;
+    // 別のプレイヤーが持っていた槍も、現在の持ち主のレベルに合わせる。
+    enchantable.addEnchantment({ type, level });
+    equippable.setEquipment(EquipmentSlot.Mainhand, tool);
+}
+
 const spearVelocitySamples = new Map();
 const pendingSpearLunges = new Set();
 
@@ -1293,12 +1336,16 @@ world.afterEvents.playerSwingStart.subscribe((event) => {
                 (velocity.z - before.velocity.z) * direction.z;
             // クールダウン中など、実際の前方加速がない攻撃には追加しない。
             if (forwardGain <= 0.1) return;
-            const extra = forwardGain * (SPEAR_LUNGE_SPEED_MULTIPLIER - 1);
-            player.applyImpulse({
-                x: direction.x * extra,
-                y: 0,
-                z: direction.z * extra
-            });
+            const extra = forwardGain * getSpearExtraSpeedMultiplier(getSpearPoints(player));
+            if (extra > 0) {
+                player.applyImpulse({
+                    x: direction.x * extra,
+                    y: 0,
+                    z: direction.z * extra
+                });
+            }
+            addSpearLungePoint(player);
+            applySpearLungeEnchantment(player);
         } catch {
             // ログアウト・ディメンション移動などで無効になった場合は中止する。
         } finally {
