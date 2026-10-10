@@ -4,15 +4,27 @@
     "description": "ExtensionTrader",
     "name": "ExtensionTrader",
     "uuid": "ae649bcf-256c-4013-9068-6a802b89d756",
-    "version": [0, 0, 1],
-    "min_engine_version": [1, 21, 100]
+    "version": [
+      0,
+      0,
+      1
+    ],
+    "min_engine_version": [
+      1,
+      21,
+      100
+    ]
   },
   "modules": [
     {
       "description": "ExtensionTrader Data",
       "type": "data",
       "uuid": "aa6e90c8-c925-460f-8155-c8a60b753caa",
-      "version": [0, 0, 1]
+      "version": [
+        0,
+        0,
+        1
+      ]
     },
     {
       "description": "ExtensionTrader Script",
@@ -20,13 +32,25 @@
       "language": "javascript",
       "entry": "scripts/main.js",
       "uuid": "bb6e90c8-c925-460f-8155-c8a60b753cab",
-      "version": [0, 0, 1]
+      "version": [
+        0,
+        0,
+        1
+      ]
     }
   ],
   "dependencies": [
     {
       "module_name": "@minecraft/server",
       "version": "2.5.0"
+    },
+    {
+      "uuid": "c0c2aa47-6f67-47c6-bd63-c41706771521",
+      "version": [
+        1,
+        0,
+        0
+      ]
     }
   ]
 }

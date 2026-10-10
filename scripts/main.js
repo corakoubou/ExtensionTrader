@@ -5,7 +5,8 @@ import {
     EntityComponentTypes,
 	EntitySwingSource,
     ItemComponentTypes,
-    EnchantmentTypes
+    EnchantmentTypes,
+    ItemStack
 } from "@minecraft/server";
 
 /*
@@ -1352,4 +1353,76 @@ world.afterEvents.playerSwingStart.subscribe((event) => {
             pendingSpearLunges.delete(player.id);
         }
     });
+});
+
+
+// 標準ボートを、ネイティブの移動コンポーネントで操縦する高速ボートに置換する。
+// 乗客がいる場合は降船後に変換する。変換に失敗した場合は元のボートを残す。
+function replaceWithFastBoat(boat) {
+    if (!["minecraft:boat", "minecraft:chest_boat"].includes(boat.typeId)) return;
+    let replacement;
+    try {
+        const rideable = boat.getComponent(EntityComponentTypes.Rideable);
+        if (rideable?.getRiders().length) return;
+        const chest = boat.typeId === "minecraft:chest_boat";
+        replacement = boat.dimension.spawnEntity(
+            chest ? "extensiontrader:fast_chest_boat" : "extensiontrader:fast_boat",
+            boat.location
+        );
+        replacement.setRotation(boat.getRotation());
+        replacement.nameTag = boat.nameTag;
+        const variant = boat.getComponent("minecraft:variant")?.value ?? 0;
+        replacement.triggerEvent(`extensiontrader:wood_${Math.max(0, Math.min(9, variant))}`);
+        if (chest) {
+            const source = boat.getComponent(EntityComponentTypes.Inventory)?.container;
+            const destination = replacement.getComponent(EntityComponentTypes.Inventory)?.container;
+            if (!source || !destination || destination.size < source.size) {
+                throw new Error("チェストの引き継ぎ先を取得できませんでした");
+            }
+            for (let slot = 0; slot < source.size; slot++) {
+                destination.setItem(slot, source.getItem(slot));
+            }
+        }
+        boat.remove();
+    } catch (error) {
+        try { replacement?.remove(); } catch {}
+        console.warn(`高速ボートへの変換を中止しました: ${error}`);
+    }
+}
+
+world.afterEvents.entitySpawn.subscribe(({ entity }) => {
+    if (!["minecraft:boat", "minecraft:chest_boat"].includes(entity.typeId)) return;
+    system.run(() => replaceWithFastBoat(entity));
+});
+
+// 既に設置済み・チャンク再読込後のボートも、乗客がいない時に移行する。
+system.runInterval(() => {
+    for (const dimensionId of ["overworld", "nether", "the_end"]) {
+        const dimension = world.getDimension(dimensionId);
+        for (const type of ["minecraft:boat", "minecraft:chest_boat"]) {
+            for (const boat of dimension.getEntities({ type })) replaceWithFastBoat(boat);
+        }
+    }
+}, 100);
+
+world.afterEvents.entityDie.subscribe(({ deadEntity, damageSource }) => {
+    if (!["extensiontrader:fast_boat", "extensiontrader:fast_chest_boat"].includes(deadEntity.typeId)) return;
+    try {
+        if (damageSource.damagingEntity?.typeId === "minecraft:player" &&
+            damageSource.damagingEntity.getGameMode() === "Creative") return;
+        const woods = ["oak", "spruce", "birch", "jungle", "acacia",
+            "dark_oak", "mangrove", "bamboo", "cherry", "pale_oak"];
+        const variant = deadEntity.getComponent("minecraft:variant")?.value ?? 0;
+        const wood = woods[variant] ?? "oak";
+        const chest = deadEntity.typeId === "extensiontrader:fast_chest_boat";
+        const suffix = wood === "bamboo"
+            ? (chest ? "chest_raft" : "raft")
+            : (chest ? "chest_boat" : "boat");
+        deadEntity.dimension.spawnItem(
+            new ItemStack(`minecraft:${wood}_${suffix}`, 1),
+            deadEntity.location
+        );
+    } catch (error) {
+        console.warn(`高速ボートのアイテム回収に失敗しました: ${error}`);
+    }
 });

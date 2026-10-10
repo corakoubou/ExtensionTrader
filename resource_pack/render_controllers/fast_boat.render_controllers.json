@@ -1,0 +1,32 @@
+{
+  "format_version": "1.8.0",
+  "render_controllers": {
+    "controller.render.extensiontrader.fast_boat": {
+      "arrays": {
+        "textures": {
+          "Array.woods": [
+            "Texture.wood_0",
+            "Texture.wood_1",
+            "Texture.wood_2",
+            "Texture.wood_3",
+            "Texture.wood_4",
+            "Texture.wood_5",
+            "Texture.wood_6",
+            "Texture.wood_7",
+            "Texture.wood_8",
+            "Texture.wood_9"
+          ]
+        }
+      },
+      "geometry": "Geometry.default",
+      "materials": [
+        {
+          "*": "Material.default"
+        }
+      ],
+      "textures": [
+        "Array.woods[math.clamp(query.variant, 0, 9)]"
+      ]
+    }
+  }
+}
