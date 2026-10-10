@@ -447,6 +447,7 @@
 			"minecraft:set_stats": {
                 "queue_command": {
                     "command": [
+                        "locate structure village",
 						"scoreboard objectives add strength dummy 筋力",
 						"scoreboard objectives add stamina dummy スタミナ",
 						"scoreboard objectives add stamina_max dummy スタミナ最大値",
