@@ -99,6 +99,25 @@ const SHOVELS = new Set([
     "minecraft:netherite_shovel"
 ]);
 
+const HOE_BLOCKS = new Set([
+    "minecraft:hay_block",
+    "minecraft:leaves",
+    "minecraft:leaves2",
+    "minecraft:oak_leaves",
+    "minecraft:spruce_leaves",
+    "minecraft:birch_leaves",
+    "minecraft:jungle_leaves",
+    "minecraft:acacia_leaves",
+    "minecraft:dark_oak_leaves",
+    "minecraft:azalea_leaves",
+    "minecraft:azalea_leaves_flowered",
+    "minecraft:mangrove_leaves",
+    "minecraft:cherry_leaves",
+    "minecraft:pale_oak_leaves",
+    "minecraft:leaf_litter",
+    "minecraft:wildflowers"
+]);
+
 const MINING_TOOL_STATS = [
     {
         items: PICKAXES,
@@ -410,15 +429,16 @@ world.afterEvents.playerBreakBlock.subscribe((event) => {
         event.brokenBlockPermutation.type.id;
 
     /*
-     * 鉱石か原木かを判定。
+     * 鉱石・原木・鍬の対象ブロックかを判定。
      */
     const ore = isOre(brokenTypeId);
     const log = isLog(brokenTypeId);
+    const hoeBlock = HOE_BLOCKS.has(brokenTypeId);
 
     /*
-     * 鉱石でも原木でもない場合は通常破壊だけ。
+     * 一括破壊の対象外なら通常破壊だけ。
      */
-    if (!ore && !log) {
+    if (!ore && !log && !hoeBlock) {
         return;
     }
 
@@ -439,6 +459,10 @@ world.afterEvents.playerBreakBlock.subscribe((event) => {
     /*
      * 最初に壊したブロックの座標。
      */
+    if (hoeBlock && !HOES.has(usedTool.typeId)) {
+        return;
+    }
+
     const startLocation = {
         x: event.block.location.x,
         y: event.block.location.y,
@@ -630,6 +654,10 @@ function veinMine(
             isLog(brokenTypeId) &&
             !AXES.has(tool.typeId)
         ) {
+            break;
+        }
+
+        if (HOE_BLOCKS.has(brokenTypeId) && !HOES.has(tool.typeId)) {
             break;
         }
 
