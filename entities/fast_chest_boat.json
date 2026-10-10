@@ -66,8 +66,8 @@
         ]
       },
       "minecraft:collision_box": {
-        "width": 1.4,
-        "height": 0.6
+        "width": 1.65,
+        "height": 0.65
       },
       "minecraft:health": {
         "value": 8,
@@ -75,16 +75,18 @@
       },
       "minecraft:physics": {},
       "minecraft:pushable": {
-        "is_pushable": true,
+        "is_pushable": false,
         "is_pushable_by_piston": true
       },
       "minecraft:movement": {
-        "value": 0.075
+        "value": 0.0375
       },
       "minecraft:underwater_movement": {
-        "value": 0.6
+        "value": 0.3
       },
-      "minecraft:movement.basic": {},
+      "minecraft:movement.basic": {
+        "max_turn": 10
+      },
       "minecraft:input_ground_controlled": {},
       "minecraft:navigation.walk": {
         "can_sink": false,
@@ -100,22 +102,44 @@
         ]
       },
       "minecraft:rideable": {
-        "seat_count": 1,
+        "seat_count": 3,
         "controlling_seat": 0,
         "family_types": [
-          "player"
+          "player",
+          "mob"
         ],
         "interact_text": "action.interact.ride.boat",
         "seats": [
           {
             "position": [
               0,
-              0.2,
+              0.25,
+              0.6
+            ],
+            "min_rider_count": 0,
+            "max_rider_count": 3
+          },
+          {
+            "position": [
+              0,
+              0.25,
               0
-            ]
+            ],
+            "min_rider_count": 0,
+            "max_rider_count": 3
+          },
+          {
+            "position": [
+              0,
+              0.25,
+              -0.6
+            ],
+            "min_rider_count": 0,
+            "max_rider_count": 3
           }
         ],
-        "crouching_skip_interact": true
+        "crouching_skip_interact": true,
+        "pull_in_entities": false
       },
       "minecraft:variant": {
         "value": 0
