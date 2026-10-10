@@ -1353,3 +1353,83 @@ world.afterEvents.playerSwingStart.subscribe((event) => {
         }
     });
 });
+
+
+// /scriptevent extensiontrader:village <X> <Z> で村の座標をワールドに保存する。
+const REGISTERED_VILLAGE_PROPERTY = "extensiontrader:registered_village";
+
+function getRegisteredVillage() {
+    const value = world.getDynamicProperty(REGISTERED_VILLAGE_PROPERTY);
+    if (typeof value !== "string") return undefined;
+    try {
+        const village = JSON.parse(value);
+        if (Number.isSafeInteger(village.x) && Number.isSafeInteger(village.z)) {
+            return village;
+        }
+    } catch {
+        // 未登録・無効な保存データは座標として表示しない。
+    }
+    return undefined;
+}
+
+function sendRegisteredVillage(player) {
+    const village = getRegisteredVillage();
+    if (village) {
+        player.sendMessage(
+            `§a登録済みの村（オーバーワールド）: §fX: ${village.x}, Z: ${village.z}`
+        );
+    } else {
+        player.sendMessage(
+            "§e村の座標は未登録です。/locate structure village で調べ、" +
+            "/scriptevent extensiontrader:village <X> <Z> で登録してください。"
+        );
+    }
+}
+
+system.afterEvents.scriptEventReceive.subscribe((event) => {
+    if (event.id !== "extensiontrader:village") return;
+    const reply = message => {
+        if (event.sourceEntity?.typeId === "minecraft:player") {
+            event.sourceEntity.sendMessage(message);
+        } else {
+            world.sendMessage(message);
+        }
+    };
+    const message = event.message.trim();
+    if (message === "show") {
+        const village = getRegisteredVillage();
+        reply(village
+            ? `§a登録済みの村（オーバーワールド）: §fX: ${village.x}, Z: ${village.z}`
+            : "§e村の座標は未登録です。");
+        return;
+    }
+    if (message === "clear") {
+        world.setDynamicProperty(REGISTERED_VILLAGE_PROPERTY, undefined);
+        reply("§e村の座標の登録を解除しました。");
+        return;
+    }
+    const parts = message.split(/\s+/);
+    if (parts.length !== 2 || !parts.every(value => /^-?\d+$/.test(value))) {
+        reply("§e登録方法: /scriptevent extensiontrader:village <X> <Z>");
+        return;
+    }
+    const [x, z] = parts.map(Number);
+    if (![x, z].every(value => Number.isSafeInteger(value) && Math.abs(value) <= 30000000)) {
+        reply("§c座標は-30000000〜30000000の整数で指定してください。");
+        return;
+    }
+    world.setDynamicProperty(REGISTERED_VILLAGE_PROPERTY, JSON.stringify({ x, z }));
+    // 登録時にも現在参加している全プレイヤーへ知らせる。
+    for (const player of world.getAllPlayers()) sendRegisteredVillage(player);
+});
+
+world.afterEvents.playerSpawn.subscribe((event) => {
+    if (!event.initialSpawn) return;
+    system.run(() => {
+        try {
+            sendRegisteredVillage(event.player);
+        } catch {
+            // 表示前にログアウトした場合は、次回参加時に表示する。
+        }
+    });
+});
