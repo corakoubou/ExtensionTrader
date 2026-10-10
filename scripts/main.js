@@ -1227,3 +1227,82 @@ system.runInterval(() => {
         }
     }
 }, 5);
+
+
+// Lungeによる前方加速に、その約2倍を追加して合計約3倍にする。
+const SPEAR_LUNGE_SPEED_MULTIPLIER = 3;
+const SPEAR_TYPES = new Set([
+    "minecraft:wooden_spear", "minecraft:stone_spear",
+    "minecraft:copper_spear", "minecraft:iron_spear",
+    "minecraft:golden_spear", "minecraft:diamond_spear",
+    "minecraft:netherite_spear"
+]);
+const spearVelocitySamples = new Map();
+const pendingSpearLunges = new Set();
+
+system.runInterval(() => {
+    const activeIds = new Set();
+    for (const player of world.getAllPlayers()) {
+        activeIds.add(player.id);
+        const old = spearVelocitySamples.get(player.id);
+        spearVelocitySamples.set(player.id, {
+            tick: system.currentTick,
+            dimensionId: player.dimension.id,
+            velocity: player.getVelocity(),
+            previous: old ? {
+                tick: old.tick,
+                dimensionId: old.dimensionId,
+                velocity: old.velocity
+            } : undefined
+        });
+    }
+    for (const id of spearVelocitySamples.keys()) {
+        if (!activeIds.has(id)) spearVelocitySamples.delete(id);
+    }
+}, 1);
+
+world.afterEvents.playerSwingStart.subscribe((event) => {
+    if (event.swingSource !== EntitySwingSource.Attack) return;
+    const tool = event.heldItemStack;
+    if (!tool || !SPEAR_TYPES.has(tool.typeId)) return;
+    const enchantable = tool.getComponent(ItemComponentTypes.Enchantable);
+    if (!enchantable?.getEnchantment("lunge")) return;
+
+    const player = event.player;
+    if (pendingSpearLunges.has(player.id)) return;
+    const sample = spearVelocitySamples.get(player.id);
+    const before = sample?.tick < system.currentTick ? sample : sample?.previous;
+    if (!before || system.currentTick - before.tick > 2 ||
+        before.dimensionId !== player.dimension.id) return;
+
+    const view = player.getViewDirection();
+    const horizontalLength = Math.hypot(view.x, view.z);
+    if (horizontalLength < 0.01) return;
+    const direction = { x: view.x / horizontalLength, z: view.z / horizontalLength };
+    const dimensionId = player.dimension.id;
+    pendingSpearLunges.add(player.id);
+    system.run(() => {
+        try {
+            if (player.dimension.id !== dimensionId) return;
+            const currentTool = player.getComponent(EntityComponentTypes.Equippable)
+                ?.getEquipment(EquipmentSlot.Mainhand);
+            if (currentTool?.typeId !== tool.typeId) return;
+            const velocity = player.getVelocity();
+            const forwardGain =
+                (velocity.x - before.velocity.x) * direction.x +
+                (velocity.z - before.velocity.z) * direction.z;
+            // クールダウン中など、実際の前方加速がない攻撃には追加しない。
+            if (forwardGain <= 0.1) return;
+            const extra = forwardGain * (SPEAR_LUNGE_SPEED_MULTIPLIER - 1);
+            player.applyImpulse({
+                x: direction.x * extra,
+                y: 0,
+                z: direction.z * extra
+            });
+        } catch {
+            // ログアウト・ディメンション移動などで無効になった場合は中止する。
+        } finally {
+            pendingSpearLunges.delete(player.id);
+        }
+    });
+});
