@@ -1426,3 +1426,66 @@ world.afterEvents.entityDie.subscribe(({ deadEntity, damageSource }) => {
         console.warn(`高速ボートのアイテム回収に失敗しました: ${error}`);
     }
 });
+
+
+// 船尾に触れた、未乗船のMobを空席に乗せる。移動・速度には干渉しない。
+const CUSTOM_BOAT_TYPES = ["extensiontrader:fast_boat", "extensiontrader:fast_chest_boat"];
+
+function boardMobsAtBoatRear(boat) {
+    const rideable = boat.getComponent(EntityComponentTypes.Rideable);
+    if (!rideable || rideable.getRiders().length >= 3) return;
+    const forward = boat.getViewDirection();
+    const length = Math.hypot(forward.x, forward.z);
+    if (length < 0.01) return;
+    const fx = forward.x / length, fz = forward.z / length;
+    const location = boat.location;
+    for (const mob of boat.dimension.getEntities({ location, maxDistance: 1.7 })) {
+        if (rideable.getRiders().length >= 3) break;
+        try {
+            if (mob.id === boat.id || mob.typeId === "minecraft:player" ||
+                CUSTOM_BOAT_TYPES.includes(mob.typeId) ||
+                !mob.getComponent(EntityComponentTypes.Health) ||
+                mob.getComponent(EntityComponentTypes.Riding)?.entityRidingOn) continue;
+            const dx = mob.location.x - location.x;
+            const dz = mob.location.z - location.z;
+            const behind = dx * fx + dz * fz;
+            const side = Math.abs(dx * fz - dz * fx);
+            if (behind > -0.25 || behind < -1.6 || side > 0.9 ||
+                Math.abs(mob.location.y - location.y) > 0.8) continue;
+            rideable.addRider(mob);
+        } catch {
+            // デスポーン・既に別の乗り物に乗ったMobは処理しない。
+        }
+    }
+}
+
+system.runInterval(() => {
+    for (const id of ["overworld", "nether", "the_end"]) {
+        const dimension = world.getDimension(id);
+        for (const type of CUSTOM_BOAT_TYPES) {
+            for (const boat of dimension.getEntities({ type })) {
+                try { boardMobsAtBoatRear(boat); } catch {}
+            }
+        }
+    }
+}, 5);
+
+// 無人の船にMobが先に乗っていた場合、乗船したプレイヤーを操縦席へ移す。
+world.afterEvents.playerInteractWithEntity.subscribe(({ player, target }) => {
+    if (!CUSTOM_BOAT_TYPES.includes(target.typeId)) return;
+    system.run(() => {
+        try {
+            const rideable = target.getComponent(EntityComponentTypes.Rideable);
+            const riders = rideable?.getRiders() ?? [];
+            if (!riders.some(rider => rider.id === player.id) ||
+                riders[0]?.typeId === "minecraft:player") return;
+            rideable.ejectRiders();
+            rideable.addRider(player);
+            for (const rider of riders) {
+                if (rider.id !== player.id) rideable.addRider(rider);
+            }
+        } catch {
+            // 降船・船の破壊が発生した場合は操作しない。
+        }
+    });
+});
