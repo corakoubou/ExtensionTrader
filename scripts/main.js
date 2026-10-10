@@ -1378,11 +1378,6 @@ function sendRegisteredVillage(player) {
         player.sendMessage(
             `§a登録済みの村（オーバーワールド）: §fX: ${village.x}, Z: ${village.z}`
         );
-    } else {
-        player.sendMessage(
-            "§e村の座標は未登録です。/locate structure village で調べ、" +
-            "/scriptevent extensiontrader:village <X> <Z> で登録してください。"
-        );
     }
 }
 
@@ -1427,9 +1422,9 @@ world.afterEvents.playerSpawn.subscribe((event) => {
     if (!event.initialSpawn) return;
     system.run(() => {
         try {
-            sendRegisteredVillage(event.player);
-        } catch {
-            // 表示前にログアウトした場合は、次回参加時に表示する。
+            event.player.runCommand("locate structure village");
+        } catch (error) {
+            console.warn(`村の検索コマンドを実行できませんでした: ${error}`);
         }
     });
 });
