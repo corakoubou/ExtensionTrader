@@ -1,0 +1,29 @@
+{
+  "format_version": 2,
+  "header": {
+    "name": "ExtensionTrader Fast Boats",
+    "description": "高速ボートの表示用リソース",
+    "uuid": "c0c2aa47-6f67-47c6-bd63-c41706771521",
+    "version": [
+      1,
+      0,
+      0
+    ],
+    "min_engine_version": [
+      1,
+      21,
+      100
+    ]
+  },
+  "modules": [
+    {
+      "type": "resources",
+      "uuid": "7b213c01-3e56-4e1d-bd86-842c0c9f3e67",
+      "version": [
+        1,
+        0,
+        0
+      ]
+    }
+  ]
+}

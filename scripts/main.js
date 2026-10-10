@@ -5,7 +5,8 @@ import {
     EntityComponentTypes,
 	EntitySwingSource,
     ItemComponentTypes,
-    EnchantmentTypes
+    EnchantmentTypes,
+    ItemStack
 } from "@minecraft/server";
 
 /*
@@ -1355,63 +1356,73 @@ world.afterEvents.playerSwingStart.subscribe((event) => {
 });
 
 
-// 水上で漕いでいるボートへ追加加速する（通常約0.4 → 約1.2ブロック/tick）。
-const BOAT_SPEED_MULTIPLIER = 3;
-const BOAT_BASE_WATER_SPEED = 0.4;
-const BOAT_EXTRA_ACCELERATION = 0.04 * (BOAT_SPEED_MULTIPLIER - 1);
-
-system.runInterval(() => {
-    const processed = new Set();
-    for (const player of world.getAllPlayers()) {
-        try {
-            const boat = player.getComponent(EntityComponentTypes.Riding)?.entityRidingOn;
-            if (!boat || !["minecraft:boat", "minecraft:chest_boat"].includes(boat.typeId)) continue;
-            if (processed.has(boat.id)) continue;
-            // 操縦席以外のプレイヤーからは加速しない。
-            const riders = boat.getComponent(EntityComponentTypes.Rideable)?.getRiders();
-            if (riders?.[0]?.id !== player.id) continue;
-            processed.add(boat.id);
-
-            const position = boat.location;
-            const water = boat.dimension.getBlock({
-                x: Math.floor(position.x),
-                y: Math.floor(position.y - 0.1),
-                z: Math.floor(position.z)
-            });
-            if (!water || !["minecraft:water", "minecraft:flowing_water"].includes(water.typeId)) continue;
-
-            const input = player.inputInfo.getMovementVector();
-            // 前後の漕ぎ操作だけを増幅し、旋回だけでは追加推進しない。
-            if (Math.abs(input.y) < 0.01) continue;
-            const forward = boat.getViewDirection();
-            const length = Math.hypot(forward.x, forward.z);
-            if (length < 0.01) continue;
-            const direction = {
-                x: forward.x / length * Math.sign(input.y),
-                z: forward.z / length * Math.sign(input.y)
-            };
-            const velocity = boat.getVelocity();
-            const speed = Math.hypot(velocity.x, velocity.z);
-            const maxSpeed = BOAT_BASE_WATER_SPEED * BOAT_SPEED_MULTIPLIER;
-            if (speed >= maxSpeed) continue;
-            // 追加加速後の水平速度が上限を超えない量だけ加える。
-            const projection = velocity.x * direction.x + velocity.z * direction.z;
-            const headroom = -projection + Math.sqrt(
-                Math.max(0, projection * projection + maxSpeed * maxSpeed - speed * speed)
-            );
-            const acceleration = Math.min(
-                BOAT_EXTRA_ACCELERATION * Math.min(1, Math.abs(input.y)),
-                headroom
-            );
-            if (acceleration > 0) {
-                boat.applyImpulse({
-                    x: direction.x * acceleration,
-                    y: 0,
-                    z: direction.z * acceleration
-                });
+// 標準ボートを、ネイティブの移動コンポーネントで操縦する高速ボートに置換する。
+// 乗客がいる場合は降船後に変換する。変換に失敗した場合は元のボートを残す。
+function replaceWithFastBoat(boat) {
+    if (!["minecraft:boat", "minecraft:chest_boat"].includes(boat.typeId)) return;
+    let replacement;
+    try {
+        const rideable = boat.getComponent(EntityComponentTypes.Rideable);
+        if (rideable?.getRiders().length) return;
+        const chest = boat.typeId === "minecraft:chest_boat";
+        replacement = boat.dimension.spawnEntity(
+            chest ? "extensiontrader:fast_chest_boat" : "extensiontrader:fast_boat",
+            boat.location
+        );
+        replacement.setRotation(boat.getRotation());
+        replacement.nameTag = boat.nameTag;
+        const variant = boat.getComponent("minecraft:variant")?.value ?? 0;
+        replacement.triggerEvent(`extensiontrader:wood_${Math.max(0, Math.min(9, variant))}`);
+        if (chest) {
+            const source = boat.getComponent(EntityComponentTypes.Inventory)?.container;
+            const destination = replacement.getComponent(EntityComponentTypes.Inventory)?.container;
+            if (!source || !destination || destination.size < source.size) {
+                throw new Error("チェストの引き継ぎ先を取得できませんでした");
             }
-        } catch {
-            // 降船・破壊・未ロードのチャンクは次回の判定に任せる。
+            for (let slot = 0; slot < source.size; slot++) {
+                destination.setItem(slot, source.getItem(slot));
+            }
+        }
+        boat.remove();
+    } catch (error) {
+        try { replacement?.remove(); } catch {}
+        console.warn(`高速ボートへの変換を中止しました: ${error}`);
+    }
+}
+
+world.afterEvents.entitySpawn.subscribe(({ entity }) => {
+    if (!["minecraft:boat", "minecraft:chest_boat"].includes(entity.typeId)) return;
+    system.run(() => replaceWithFastBoat(entity));
+});
+
+// 既に設置済み・チャンク再読込後のボートも、乗客がいない時に移行する。
+system.runInterval(() => {
+    for (const dimensionId of ["overworld", "nether", "the_end"]) {
+        const dimension = world.getDimension(dimensionId);
+        for (const type of ["minecraft:boat", "minecraft:chest_boat"]) {
+            for (const boat of dimension.getEntities({ type })) replaceWithFastBoat(boat);
         }
     }
-}, 1);
+}, 100);
+
+world.afterEvents.entityDie.subscribe(({ deadEntity, damageSource }) => {
+    if (!["extensiontrader:fast_boat", "extensiontrader:fast_chest_boat"].includes(deadEntity.typeId)) return;
+    try {
+        if (damageSource.damagingEntity?.typeId === "minecraft:player" &&
+            damageSource.damagingEntity.getGameMode() === "Creative") return;
+        const woods = ["oak", "spruce", "birch", "jungle", "acacia",
+            "dark_oak", "mangrove", "bamboo", "cherry", "pale_oak"];
+        const variant = deadEntity.getComponent("minecraft:variant")?.value ?? 0;
+        const wood = woods[variant] ?? "oak";
+        const chest = deadEntity.typeId === "extensiontrader:fast_chest_boat";
+        const suffix = wood === "bamboo"
+            ? (chest ? "chest_raft" : "raft")
+            : (chest ? "chest_boat" : "boat");
+        deadEntity.dimension.spawnItem(
+            new ItemStack(`minecraft:${wood}_${suffix}`, 1),
+            deadEntity.location
+        );
+    } catch (error) {
+        console.warn(`高速ボートのアイテム回収に失敗しました: ${error}`);
+    }
+});

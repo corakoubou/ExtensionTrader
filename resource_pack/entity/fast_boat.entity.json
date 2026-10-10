@@ -1,0 +1,29 @@
+{
+  "format_version": "1.10.0",
+  "minecraft:client_entity": {
+    "description": {
+      "identifier": "extensiontrader:fast_boat",
+      "materials": {
+        "default": "entity_alphatest"
+      },
+      "textures": {
+        "wood_0": "textures/entity/boat/boat_oak",
+        "wood_1": "textures/entity/boat/boat_spruce",
+        "wood_2": "textures/entity/boat/boat_birch",
+        "wood_3": "textures/entity/boat/boat_jungle",
+        "wood_4": "textures/entity/boat/boat_acacia",
+        "wood_5": "textures/entity/boat/boat_darkoak",
+        "wood_6": "textures/entity/boat/mangrove_boat",
+        "wood_7": "textures/entity/boat/bamboo_raft",
+        "wood_8": "textures/entity/boat/cherry_boat",
+        "wood_9": "textures/entity/boat/pale_oak_boat"
+      },
+      "geometry": {
+        "default": "geometry.extensiontrader.fast_boat"
+      },
+      "render_controllers": [
+        "controller.render.extensiontrader.fast_boat"
+      ]
+    }
+  }
+}
