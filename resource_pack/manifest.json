@@ -2,12 +2,12 @@
   "format_version": 2,
   "header": {
     "name": "ExtensionTrader Fast Boats",
-    "description": "高速ボートの表示用リソース",
+    "description": "ジェットボートの表示用リソース",
     "uuid": "c0c2aa47-6f67-47c6-bd63-c41706771521",
     "version": [
       1,
       1,
-      0
+      1
     ],
     "min_engine_version": [
       1,
@@ -22,7 +22,7 @@
       "version": [
         1,
         1,
-        0
+        1
       ]
     }
   ]
