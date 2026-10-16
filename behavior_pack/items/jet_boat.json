@@ -23,7 +23,8 @@
           "minecraft:water",
           "minecraft:flowing_water"
         ]
-      }
+      },
+      "minecraft:liquid_clipped": true
     }
   }
 }
