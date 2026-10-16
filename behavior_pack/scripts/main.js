@@ -1240,7 +1240,7 @@ const SPEAR_TYPES = new Set([
     "minecraft:golden_spear", "minecraft:diamond_spear",
     "minecraft:netherite_spear"
 ]);
-// 槍は突進1回につき1ポイント。レベル10までは体力増強と同じ境界値。
+// 槍は突進1回につき1ポイント、直接攻撃の命中でさらに1ポイント。レベル10までは体力増強と同じ境界値。
 const SPEAR_LEVEL_THRESHOLDS = [
     101, 201, 351, 551, 801, 1101, 1401, 1801, 2401,
     3001, 3601, 4201
@@ -1260,12 +1260,26 @@ function getSpearExtraSpeedMultiplier(points) {
     return Math.min(10, Math.max(0, getSpearLevel(points) - 3));
 }
 
-function addSpearLungePoint(player) {
+function addSpearPoint(player) {
     const identity = player.scoreboardIdentity;
     if (!identity) return;
     const objective = getOrCreateObjective("sp_mineing", "槍採掘能力値");
     objective.setScore(identity, (objective.getScore(identity) ?? 0) + 1);
 }
+
+// 槍による直接攻撃でダメージを与えた時、突進分とは別に1ポイント加算する。
+world.afterEvents.entityHurt.subscribe(({ hurtEntity, damageSource, damage }) => {
+    const attacker = damageSource.damagingEntity;
+    if (damage <= 0 || damageSource.cause !== "entityAttack" ||
+        damageSource.damagingProjectile ||
+        attacker?.typeId !== "minecraft:player" || attacker.id === hurtEntity.id ||
+        !hurtEntity.getComponent(EntityComponentTypes.Health)) return;
+    const tool = attacker.getComponent(EntityComponentTypes.Equippable)
+        ?.getEquipment(EquipmentSlot.Mainhand);
+    if (!tool || !SPEAR_TYPES.has(tool.typeId)) return;
+    addSpearPoint(attacker);
+    applySpearLungeEnchantment(attacker);
+});
 
 function applySpearLungeEnchantment(player) {
     const equippable = player.getComponent(EntityComponentTypes.Equippable);
@@ -1345,7 +1359,7 @@ world.afterEvents.playerSwingStart.subscribe((event) => {
                     z: direction.z * extra
                 });
             }
-            addSpearLungePoint(player);
+            addSpearPoint(player);
             applySpearLungeEnchantment(player);
         } catch {
             // ログアウト・ディメンション移動などで無効になった場合は中止する。
