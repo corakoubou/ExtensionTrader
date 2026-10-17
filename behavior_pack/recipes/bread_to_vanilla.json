@@ -1,0 +1,25 @@
+{
+  "format_version": "1.20.10",
+  "minecraft:recipe_shapeless": {
+    "description": {
+      "identifier": "extensiontrader:bread_to_vanilla"
+    },
+    "tags": [
+      "crafting_table"
+    ],
+    "ingredients": [
+      {
+        "item": "extensiontrader:bread"
+      }
+    ],
+    "unlock": [
+      {
+        "item": "extensiontrader:bread"
+      }
+    ],
+    "result": {
+      "item": "minecraft:bread",
+      "count": 1
+    }
+  }
+}
