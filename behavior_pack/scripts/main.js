@@ -1365,11 +1365,14 @@ world.afterEvents.playerSwingStart.subscribe((event) => {
                 (velocity.z - before.velocity.z) * direction.z;
             // クールダウン中など、実際の前方加速がない攻撃には追加しない。
             if (forwardGain <= 0.1) return;
-            const extra = forwardGain * getSpearExtraSpeedMultiplier(getSpearPoints(player));
-            if (extra > 0) {
+            const speedMultiplier = getSpearExtraSpeedMultiplier(getSpearPoints(player));
+            const extra = forwardGain * speedMultiplier;
+            // 上下方向は3倍に強化し、低レベルでも基準1倍分の力を確保する。
+            const verticalExtra = forwardGain * Math.max(1, speedMultiplier) * 3;
+            if (extra > 0 || Math.abs(direction.y) > 0.001) {
                 player.applyImpulse({
                     x: direction.x * extra,
-                    y: direction.y * extra,
+                    y: direction.y * verticalExtra,
                     z: direction.z * extra
                 });
             }
