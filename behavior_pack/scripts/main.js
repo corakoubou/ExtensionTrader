@@ -430,16 +430,18 @@ world.afterEvents.playerBreakBlock.subscribe((event) => {
         event.brokenBlockPermutation.type.id;
 
     /*
-     * 鉱石・原木・鍬の対象ブロックかを判定。
+     * 鉱石・原木・鍬の対象ブロックと、金のつるはし専用の石を判定。
      */
     const ore = isOre(brokenTypeId);
     const log = isLog(brokenTypeId);
     const hoeBlock = HOE_BLOCKS.has(brokenTypeId);
+    const goldStone = brokenTypeId === "minecraft:stone" &&
+        usedTool.typeId === "minecraft:golden_pickaxe";
 
     /*
      * 一括破壊の対象外なら通常破壊だけ。
      */
-    if (!ore && !log && !hoeBlock) {
+    if (!ore && !log && !hoeBlock && !goldStone) {
         return;
     }
 
@@ -655,6 +657,12 @@ function veinMine(
             isLog(brokenTypeId) &&
             !AXES.has(tool.typeId)
         ) {
+            break;
+        }
+
+        // 石の一括破壊は金のつるはし限定。途中の持ち替えでも停止する。
+        if (brokenTypeId === "minecraft:stone" &&
+            tool.typeId !== "minecraft:golden_pickaxe") {
             break;
         }
 
