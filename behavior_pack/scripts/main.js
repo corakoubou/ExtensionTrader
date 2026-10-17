@@ -1342,14 +1342,9 @@ world.afterEvents.playerSwingStart.subscribe((event) => {
         before.dimensionId !== player.dimension.id) return;
 
     const view = player.getViewDirection();
-    // 追加加速は上下を含む視線方向に向ける。真上・真下も対象にする。
-    const viewLength = Math.hypot(view.x, view.y, view.z);
-    if (viewLength < 0.01) return;
-    const direction = {
-        x: view.x / viewLength,
-        y: view.y / viewLength,
-        z: view.z / viewLength
-    };
+    const horizontalLength = Math.hypot(view.x, view.z);
+    if (horizontalLength < 0.01) return;
+    const direction = { x: view.x / horizontalLength, z: view.z / horizontalLength };
     const dimensionId = player.dimension.id;
     pendingSpearLunges.add(player.id);
     system.run(() => {
@@ -1361,18 +1356,14 @@ world.afterEvents.playerSwingStart.subscribe((event) => {
             const velocity = player.getVelocity();
             const forwardGain =
                 (velocity.x - before.velocity.x) * direction.x +
-                (velocity.y - before.velocity.y) * direction.y +
                 (velocity.z - before.velocity.z) * direction.z;
             // クールダウン中など、実際の前方加速がない攻撃には追加しない。
             if (forwardGain <= 0.1) return;
-            const speedMultiplier = getSpearExtraSpeedMultiplier(getSpearPoints(player));
-            const extra = forwardGain * speedMultiplier;
-            // 上下方向は3倍に強化し、低レベルでも基準1倍分の力を確保する。
-            const verticalExtra = forwardGain * Math.max(1, speedMultiplier) * 3;
-            if (extra > 0 || Math.abs(direction.y) > 0.001) {
+            const extra = forwardGain * getSpearExtraSpeedMultiplier(getSpearPoints(player));
+            if (extra > 0) {
                 player.applyImpulse({
                     x: direction.x * extra,
-                    y: direction.y * verticalExtra,
+                    y: 0,
                     z: direction.z * extra
                 });
             }
