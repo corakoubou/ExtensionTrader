@@ -1248,7 +1248,7 @@ const SPEAR_TYPES = new Set([
     "minecraft:golden_spear", "minecraft:diamond_spear",
     "minecraft:netherite_spear"
 ]);
-// 槍は突進1回につき1ポイント、直接攻撃の命中でさらに1ポイント。レベル10までは体力増強と同じ境界値。
+// 槍はLunge付きの攻撃操作1回につき1ポイント、直接攻撃の命中でさらに1ポイント。レベル10までは体力増強と同じ境界値。
 const SPEAR_LEVEL_THRESHOLDS = [
     101, 201, 351, 551, 801, 1101, 1401, 1801, 2401,
     3001, 3601, 4201
@@ -1269,10 +1269,9 @@ function getSpearExtraSpeedMultiplier(points) {
 }
 
 function addSpearPoint(player) {
-    const identity = player.scoreboardIdentity;
-    if (!identity) return;
     const objective = getOrCreateObjective("sp_mineing", "槍採掘能力値");
-    objective.setScore(identity, (objective.getScore(identity) ?? 0) + 1);
+    // 初回使用でscoreboardIdentityがまだないプレイヤーも登録して加算する。
+    objective.addScore(player, 1);
 }
 
 // 槍による直接攻撃でダメージを与えた時、突進分とは別に1ポイント加算する。
@@ -1305,6 +1304,24 @@ function applySpearLungeEnchantment(player) {
 
 const spearVelocitySamples = new Map();
 const pendingSpearLunges = new Set();
+const spearPointCooldowns = new Map();
+
+function awardSpearUsePoint(player, tool) {
+    const now = system.currentTick;
+    if (now < (spearPointCooldowns.get(player.id) ?? 0)) return;
+    // ゲーム側の槍の攻撃間隔を利用し、同じ攻撃の重複イベントを数えない。
+    let cooldownTicks = 1;
+    try {
+        cooldownTicks = Math.max(1, Math.ceil(
+            tool.getComponent(ItemComponentTypes.Cooldown)?.cooldownTicks ?? 1
+        ));
+    } catch {
+        // コンポーネントを取得できない場合も同一tickの二重加算は防ぐ。
+    }
+    addSpearPoint(player);
+    spearPointCooldowns.set(player.id, now + cooldownTicks);
+    applySpearLungeEnchantment(player);
+}
 
 system.runInterval(() => {
     const activeIds = new Set();
@@ -1325,6 +1342,9 @@ system.runInterval(() => {
     for (const id of spearVelocitySamples.keys()) {
         if (!activeIds.has(id)) spearVelocitySamples.delete(id);
     }
+    for (const id of spearPointCooldowns.keys()) {
+        if (!activeIds.has(id)) spearPointCooldowns.delete(id);
+    }
 }, 1);
 
 world.afterEvents.playerSwingStart.subscribe((event) => {
@@ -1335,6 +1355,8 @@ world.afterEvents.playerSwingStart.subscribe((event) => {
     if (!enchantable?.getEnchantment("lunge")) return;
 
     const player = event.player;
+    // ポイントは速度差・視線の角度・追加加速の成否に依存させない。
+    awardSpearUsePoint(player, tool);
     if (pendingSpearLunges.has(player.id)) return;
     const sample = spearVelocitySamples.get(player.id);
     const before = sample?.tick < system.currentTick ? sample : sample?.previous;
@@ -1367,8 +1389,6 @@ world.afterEvents.playerSwingStart.subscribe((event) => {
                     z: direction.z * extra
                 });
             }
-            addSpearPoint(player);
-            applySpearLungeEnchantment(player);
         } catch {
             // ログアウト・ディメンション移動などで無効になった場合は中止する。
         } finally {
