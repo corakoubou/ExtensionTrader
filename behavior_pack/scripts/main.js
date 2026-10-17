@@ -1342,9 +1342,14 @@ world.afterEvents.playerSwingStart.subscribe((event) => {
         before.dimensionId !== player.dimension.id) return;
 
     const view = player.getViewDirection();
-    const horizontalLength = Math.hypot(view.x, view.z);
-    if (horizontalLength < 0.01) return;
-    const direction = { x: view.x / horizontalLength, z: view.z / horizontalLength };
+    // 追加加速は上下を含む視線方向に向ける。真上・真下も対象にする。
+    const viewLength = Math.hypot(view.x, view.y, view.z);
+    if (viewLength < 0.01) return;
+    const direction = {
+        x: view.x / viewLength,
+        y: view.y / viewLength,
+        z: view.z / viewLength
+    };
     const dimensionId = player.dimension.id;
     pendingSpearLunges.add(player.id);
     system.run(() => {
@@ -1356,6 +1361,7 @@ world.afterEvents.playerSwingStart.subscribe((event) => {
             const velocity = player.getVelocity();
             const forwardGain =
                 (velocity.x - before.velocity.x) * direction.x +
+                (velocity.y - before.velocity.y) * direction.y +
                 (velocity.z - before.velocity.z) * direction.z;
             // クールダウン中など、実際の前方加速がない攻撃には追加しない。
             if (forwardGain <= 0.1) return;
@@ -1363,7 +1369,7 @@ world.afterEvents.playerSwingStart.subscribe((event) => {
             if (extra > 0) {
                 player.applyImpulse({
                     x: direction.x * extra,
-                    y: 0,
+                    y: direction.y * extra,
                     z: direction.z * extra
                 });
             }
