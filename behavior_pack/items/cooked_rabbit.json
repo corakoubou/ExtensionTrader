@@ -4,14 +4,12 @@
     "description": {
       "identifier": "minecraft:cooked_rabbit"
     },
-
     "components": {
       "minecraft:use_duration": 32,
-
       "minecraft:food": {
-        "nutrition": 5,
-        "saturation_modifier": "normal",
-		"effects": [
+        "nutrition": 20,
+        "saturation_modifier": 0.15,
+        "effects": [
           {
             "name": "regeneration",
             "chance": 1,

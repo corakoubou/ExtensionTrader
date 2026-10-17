@@ -4,14 +4,13 @@
     "description": {
       "identifier": "minecraft:cooked_beef"
     },
-
     "components": {
       "minecraft:use_duration": 32,
       "minecraft:food": {
-        "nutrition": 8,
-        "saturation_modifier": "good",
-		"can_always_eat": true,
-		"effects": [
+        "nutrition": 20,
+        "saturation_modifier": 0.32,
+        "can_always_eat": true,
+        "effects": [
           {
             "name": "regeneration",
             "chance": 1,
