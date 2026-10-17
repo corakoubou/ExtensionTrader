@@ -1459,3 +1459,12 @@ world.afterEvents.playerInteractWithEntity.subscribe(({ player, target }) => {
         }
     });
 });
+
+
+// 石炭・木炭は満腹時にも食べられる。食事完了時のみ跳躍力上昇IIを10秒付与する。
+// 新形式の food では旧 effects 配列を使わず、安定版Script APIで効果を付ける。
+world.afterEvents.itemCompleteUse.subscribe(({ source, itemStack }) => {
+    if (source.typeId !== "minecraft:player" ||
+        !["minecraft:coal", "minecraft:charcoal"].includes(itemStack.typeId)) return;
+    source.addEffect("jump_boost", 20 * 10, { amplifier: 1 });
+});
