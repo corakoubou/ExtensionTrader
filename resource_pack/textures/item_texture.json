@@ -4,6 +4,9 @@
   "texture_data": {
     "extensiontrader_jet_boat": {
       "textures": "textures/items/jet_boat"
+    },
+    "extensiontrader_arrow_turret": {
+      "textures": "textures/items/arrow_turret"
     }
   }
 }
