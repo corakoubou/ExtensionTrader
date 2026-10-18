@@ -103,6 +103,52 @@
       "minecraft:behavior.look_at_target": {
         "priority": 3,
         "look_distance": 16
+      },
+      "minecraft:interact": {
+        "interactions": [
+          {
+            "on_interact": {
+              "filters": {
+                "all_of": [
+                  {
+                    "test": "is_family",
+                    "subject": "other",
+                    "value": "player"
+                  },
+                  {
+                    "test": "has_component",
+                    "subject": "self",
+                    "operator": "!=",
+                    "value": "minecraft:instant_despawn"
+                  }
+                ]
+              },
+              "event": "extensiontrader:dismantle",
+              "target": "self"
+            },
+            "cooldown": 1,
+            "use_item": false,
+            "swing": true,
+            "spawn_items": {
+              "table": "loot_tables/entities/arrow_turret_dismantle.json"
+            },
+            "interact_text": "action.interact.extensiontrader.dismantle"
+          }
+        ]
+      }
+    },
+    "component_groups": {
+      "extensiontrader:dismantling": {
+        "minecraft:instant_despawn": {}
+      }
+    },
+    "events": {
+      "extensiontrader:dismantle": {
+        "add": {
+          "component_groups": [
+            "extensiontrader:dismantling"
+          ]
+        }
       }
     }
   }
