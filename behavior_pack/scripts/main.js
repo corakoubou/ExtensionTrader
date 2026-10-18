@@ -1248,7 +1248,7 @@ const SPEAR_TYPES = new Set([
     "minecraft:golden_spear", "minecraft:diamond_spear",
     "minecraft:netherite_spear"
 ]);
-// 槍はLunge付きの攻撃操作1回につき1ポイント、直接攻撃の命中でさらに1ポイント。レベル10までは体力増強と同じ境界値。
+// 槍は突進で前方加速できた時に1ポイント、ダメージを与えた時に別途1ポイント。レベル10までは体力増強と同じ境界値。
 const SPEAR_LEVEL_THRESHOLDS = [
     101, 201, 351, 551, 801, 1101, 1401, 1801, 2401,
     3001, 3601, 4201
@@ -1306,7 +1306,7 @@ const spearVelocitySamples = new Map();
 const pendingSpearLunges = new Set();
 const spearPointCooldowns = new Map();
 
-function awardSpearUsePoint(player, tool) {
+function awardSpearLungePoint(player, tool) {
     const now = system.currentTick;
     if (now < (spearPointCooldowns.get(player.id) ?? 0)) return;
     // ゲーム側の槍の攻撃間隔を利用し、同じ攻撃の重複イベントを数えない。
@@ -1355,8 +1355,6 @@ world.afterEvents.playerSwingStart.subscribe((event) => {
     if (!enchantable?.getEnchantment("lunge")) return;
 
     const player = event.player;
-    // ポイントは速度差・視線の角度・追加加速の成否に依存させない。
-    awardSpearUsePoint(player, tool);
     if (pendingSpearLunges.has(player.id)) return;
     const sample = spearVelocitySamples.get(player.id);
     const before = sample?.tick < system.currentTick ? sample : sample?.previous;
@@ -1382,6 +1380,8 @@ world.afterEvents.playerSwingStart.subscribe((event) => {
             // クールダウン中など、実際の前方加速がない攻撃には追加しない。
             if (forwardGain <= 0.1) return;
             const extra = forwardGain * getSpearExtraSpeedMultiplier(getSpearPoints(player));
+            // 成長による追加加速がまだない低レベルでも、Lunge自体の加速成功で加点する。
+            awardSpearLungePoint(player, currentTool);
             if (extra > 0) {
                 player.applyImpulse({
                     x: direction.x * extra,
