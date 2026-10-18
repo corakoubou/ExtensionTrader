@@ -2,3 +2,4 @@ item.extensiontrader:jet_boat.name=ジェットボート
 entity.extensiontrader:fast_boat.name=ジェットボート
 item.extensiontrader:arrow_turret.name=固定式矢発射台
 entity.extensiontrader:arrow_turret.name=固定式矢発射台
+action.interact.extensiontrader.dismantle=解体

@@ -9,7 +9,7 @@
     ],
     "ingredients": [
       {
-        "item": "minecraft:iron_ingot"
+        "item": "minecraft:copper_ingot"
       },
       {
         "item": "minecraft:stick"
@@ -26,7 +26,7 @@
     ],
     "unlock": [
       {
-        "item": "minecraft:iron_ingot"
+        "item": "minecraft:copper_ingot"
       }
     ],
     "result": {
