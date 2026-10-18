@@ -1,0 +1,32 @@
+{
+  "format_version": "1.10.0",
+  "minecraft:client_entity": {
+    "description": {
+      "identifier": "extensiontrader:arrow_turret",
+      "materials": {
+        "default": "entity_alphatest"
+      },
+      "textures": {
+        "default": "textures/entity/arrow_turret"
+      },
+      "geometry": {
+        "default": "geometry.extensiontrader.arrow_turret"
+      },
+      "animations": {
+        "aim": "animation.extensiontrader.arrow_turret.aim"
+      },
+      "scripts": {
+        "animate": [
+          "aim"
+        ]
+      },
+      "render_controllers": [
+        "controller.render.extensiontrader.arrow_turret"
+      ],
+      "spawn_egg": {
+        "base_color": "#987348",
+        "overlay_color": "#89949c"
+      }
+    }
+  }
+}

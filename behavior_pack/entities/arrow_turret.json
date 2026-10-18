@@ -1,0 +1,109 @@
+{
+  "format_version": "1.21.100",
+  "minecraft:entity": {
+    "description": {
+      "identifier": "extensiontrader:arrow_turret",
+      "is_spawnable": false,
+      "is_summonable": true
+    },
+    "components": {
+      "minecraft:type_family": {
+        "family": [
+          "extensiontrader_turret",
+          "mob"
+        ]
+      },
+      "minecraft:health": {
+        "value": 20,
+        "max": 20
+      },
+      "minecraft:collision_box": {
+        "width": 0.65,
+        "height": 2
+      },
+      "minecraft:movement": {
+        "value": 0
+      },
+      "minecraft:movement.basic": {},
+      "minecraft:navigation.walk": {
+        "can_path_over_water": false
+      },
+      "minecraft:physics": {
+        "has_gravity": true,
+        "has_collision": true
+      },
+      "minecraft:pushable": {
+        "is_pushable": false,
+        "is_pushable_by_piston": false
+      },
+      "minecraft:knockback_resistance": {
+        "value": 1
+      },
+      "minecraft:persistent": {},
+      "minecraft:nameable": {},
+      "minecraft:loot": {
+        "table": "loot_tables/entities/arrow_turret.json"
+      },
+      "minecraft:shooter": {
+        "def": "minecraft:arrow",
+        "sound": "bow"
+      },
+      "minecraft:behavior.nearest_attackable_target": {
+        "priority": 1,
+        "must_see": true,
+        "must_see_forget_duration": 1,
+        "within_radius": 16,
+        "reselect_targets": true,
+        "entity_types": [
+          {
+            "filters": {
+              "any_of": [
+                {
+                  "test": "is_family",
+                  "subject": "other",
+                  "value": "monster"
+                },
+                {
+                  "test": "is_family",
+                  "subject": "other",
+                  "value": "rabbit"
+                },
+                {
+                  "test": "is_family",
+                  "subject": "other",
+                  "value": "sheep"
+                },
+                {
+                  "test": "is_family",
+                  "subject": "other",
+                  "value": "pig"
+                },
+                {
+                  "test": "is_family",
+                  "subject": "other",
+                  "value": "cow"
+                },
+                {
+                  "test": "is_family",
+                  "subject": "other",
+                  "value": "chicken"
+                }
+              ]
+            },
+            "max_dist": 16
+          }
+        ]
+      },
+      "minecraft:behavior.ranged_attack": {
+        "priority": 2,
+        "speed_multiplier": 0,
+        "attack_interval": 1,
+        "attack_radius": 16
+      },
+      "minecraft:behavior.look_at_target": {
+        "priority": 3,
+        "look_distance": 16
+      }
+    }
+  }
+}
